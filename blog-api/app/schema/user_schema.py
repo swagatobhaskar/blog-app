@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, EmailStr, field_validator, Field, model_validator
 import re
 from typing_extensions import Self
@@ -42,29 +43,14 @@ class UserOut(UserBase):
     class Config:
         from_attributes = True
 
-# ----------------------------------------------------------
 
-class LoginInput(BaseModel):
-    email: EmailStr
-    password: str
-
-class UserLogin(BaseModel):
+class UpdateProfileResponse(BaseModel):
     message: str
-    access_token: str
-    refresh_token: str
-    csrf_token: str
-    token_type: str
-
-class UserOutWithToken(BaseModel):
-    message: str
-    access_token: str
-    refresh_token: str
-    token_type: str
+    status_code: int
     user: UserOut
 
+
 class UserPatch(BaseModel):
-    # fname: Optional[str] = None
-    # lname: Optional[str] = None
     email: Optional[EmailStr] = None
     old_password: Optional[str] = None
     new_password: Optional[str] = None
@@ -80,13 +66,3 @@ class UserPatch(BaseModel):
         if self.new_password != self.confirm_password:
             raise ValueError('New Password and Confirm Password do not match')
         return self
-
-class UpdateProfileResponse(BaseModel):
-    message: str
-    status_code: int
-    user: UserOut
-
-class TokenSchema(BaseModel):
-    access_token: str
-    token_type: str
-    

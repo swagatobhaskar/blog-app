@@ -6,6 +6,8 @@ from contextlib import asynccontextmanager
 
 from app.config import Settings, get_settings
 from app.database.session import engine, Base
+from app.api import blog, user, auth
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,6 +22,23 @@ async def lifespan(app: FastAPI):
 
       
 app = FastAPI(lifespan=lifespan)
+
+allowed_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(blog.router)
+# app.include_router(user.router)
+# app.include_router(auth.router)
 
 # Use settings as Dependency Injection
 @app.get("/")
