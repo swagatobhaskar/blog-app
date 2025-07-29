@@ -28,7 +28,7 @@ target_metadata = Base.metadata # None
 IS_PROD = os.getenv("ENV") == "production"
 # Use sync driver for alembic
 sync_sqlite_url: str = "sqlite:///./dev.db"
-sync_postgres_url: str | None = os.getenv("DATABASE_URL")
+sync_postgres_url: str = os.getenv("DATABASE_URL") or ""
 
 # DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./dev.db")
 config.set_main_option(
