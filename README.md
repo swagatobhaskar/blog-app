@@ -14,4 +14,6 @@
 
 !Write complete doc od setting up async sqlalchemy
 
+!Tag, or Category option
+
 > (Plan to include): Tests, CI/CD, Linting, Pre-commit-hook,
