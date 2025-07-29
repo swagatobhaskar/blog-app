@@ -9,7 +9,7 @@
 8. Install aiosqlite, async SQLite driver for python: `pip install aiosqlite`
 9. Use UUID as blog id. `import uuid; from sqlalchemy.dialects.postgresql import UUID as PG_UUID`
 10. SQLAlchemy 2.x async recommends `mapped_column()`, instead of the 1.x `Column()`
-11. 
+11. Initialize alembic, and modify it's settings as it doesn't support async
 12. Install JWT modules: `pip install python-jose`
 
 !Write complete doc od setting up async sqlalchemy
