@@ -6,6 +6,12 @@
 5. Run FastAPI locally with: `fastapi dev app/main.py`
 6. Create SECRET_KEY from: `import secrets; secrets.token_hex(16 or 32)` !!
 7. Create settings using `pydantic_settings` in `config.py`
+8. Install aiosqlite, async SQLite driver for python: `pip install aiosqlite`
+9. Use UUID as blog id. `import uuid; from sqlalchemy.dialects.postgresql import UUID as PG_UUID`
+10. SQLAlchemy 2.x async recommends `mapped_column()`, instead of the 1.x `Column()`
+11. 
+12. Install JWT modules: `pip install python-jose`
 
+!Write complete doc od setting up async sqlalchemy
 
 > (Plan to include): Tests, CI/CD, Linting, Pre-commit-hook,
