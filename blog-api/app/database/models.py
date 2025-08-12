@@ -2,20 +2,17 @@ import os
 import uuid
 from datetime import datetime
 from typing import List
-from sqlalchemy import String, ForeignKey, Text, func, DateTime, Boolean
+from sqlalchemy import String, ForeignKey, Text, func, DateTime, Boolean, Uuid
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 
 from .session import Base
 
-IS_PROD = os.getenv("ENV", "development").lower() == "production"
-UUID_TYPE = PG_UUID(as_uuid=True) if IS_PROD else String(36)
-print("IS_PROD:: ", IS_PROD)
-
 class User(Base):
     __tablename__ = "users"
     
-    id: Mapped[uuid.UUID] = mapped_column(UUID_TYPE, primary_key=True, default=uuid.uuid4)
+    # using sqlalchemy 2.0 Uuid, for database agnostic uuid type.
+    id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email: Mapped[str] = mapped_column(String)
     hashed_password: Mapped[str] = mapped_column(Text)
     # one-to-many relation with Blog
@@ -29,7 +26,7 @@ class Blog(Base):
     __tablename__ = "blogs"
     
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID_TYPE,
+        Uuid(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4
     )
