@@ -1,15 +1,20 @@
 import sys
+# import argparse
 import asyncio
 from random import randint
 from sqlalchemy import select
+
 from app.database.session import engine, AsyncSessionLocal, Base
-from app.database.models import User
+from app.database.models import User, Blog
 
 # If tables are not created yet, run this once to create the tables:
 async def init_models():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)  # Optional: drop tables first
         await conn.run_sync(Base.metadata.create_all)
+
+# ---------------------------------------------------
+# Users
 
 async def create_user(email):
     async with AsyncSessionLocal() as session:
@@ -26,13 +31,42 @@ async def get_users():
         result = await session.execute(select(User))
         return result.scalars().all()
 
+# ---------------------------------------------------
+# Blogs
+
+async def create_blog():
+    import uuid
+    
+    title: str = input("Title: ")
+    content: str = input("Content: ")
+    
+    async with AsyncSessionLocal() as session:
+        author_result = await session.execute(
+            select(User).where(User.id==uuid.UUID("cd1893ce-bd8e-4efe-ae1a-6f8df1203458"))
+        )
+        author = author_result.scalar_one_or_none()
+        
+        new_blog = Blog(title=title, content=content, author=author)
+        session.add(new_blog)
+        await session.commit()
+        await session.refresh(new_blog)
+        return new_blog
+    
+async def blog_list():
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(Blog))
+        return result.scalars().all()
+
 
 async def main():
     if len(sys.argv) < 2:   # if required arguments aren't provided
         print("Usage:")
-        print("  python run_user_ops.py init")
-        print("  python run_user_ops.py create <email>")
-        print("  python run_user_ops.py list")
+        print("  python cmd_sql.py init")
+        print("  python cmd_sql.py user_create <email>")
+        print("  python cmd_sql.py user_list")
+        print("---" * 20)
+        print("  python cmd_sql.py blog_create")
+        print("  python cmd_sql.py blog_list")
         return
     
     command = sys.argv[1]   # the command is after the script name
@@ -41,7 +75,7 @@ async def main():
         await init_models()
         print("Tables created")
     
-    elif command == "create":
+    elif command == "user_create":
         if len(sys.argv) < 3:
             print("Please provide an email.")
             return
@@ -49,10 +83,19 @@ async def main():
         user = await create_user(email=email)
         print(f"User created: ID={user.id}, Email={user.email}")
     
-    elif command == "list":
+    elif command == "user_list":
         users = await get_users()
         for user in users:
             print(f"ID={user.id}, Email={user.email}")
+            
+    elif command == "blog_create":
+        await create_blog()
+        print(f"New blog created.")
+        
+    elif command == "blog_list":
+        blogs = await blog_list()
+        for blog in blogs:
+            print(f"ID={blog.id}, Title={blog.title}")
     else:
         print(f"Unknown command: {command}")
         
