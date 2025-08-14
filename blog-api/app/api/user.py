@@ -1,17 +1,15 @@
-# import logging
-# from fastapi import HTTPException, Request, Depends, APIRouter, Query, status
-# from sqlalchemy.orm import Session
-# from sqlalchemy.exc import IntegrityError
+from fastapi import HTTPException, Request, Depends, APIRouter, Query, status
+from sqlalchemy.exc import IntegrityError
 
-# # from app.dependencies import get_db, get_current_user, verify_csrf
-# from app.database.models import User
-# from app.schema import user_schema
+from app.dependencies import get_db#, get_current_user, verify_csrf
+from app.database.models import User
+from app.schema import user_schema
 # # from app.utils import security
-# from app.config import get_settings
+from app.config import get_settings
 
-# settings = get_settings()
+settings = get_settings()
 
-# router = APIRouter(prefix="/api/user", tags=["user"], dependencies=[Depends(verify_csrf)])
+router = APIRouter(prefix="/api/user", tags=["user"]) #, dependencies=[Depends(verify_csrf)])
 
 # @router.get("/", response_model=user_schema.UserOut, status_code=status.HTTP_200_OK)
 # async def user_profile(current_user: User = Depends(get_current_user)): # request: Request, 
