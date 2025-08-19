@@ -31,7 +31,7 @@ def get_token_from_cookie(request: Request):
 async def get_current_user(token: str = Depends(get_token_from_cookie), session: AsyncSession = Depends(get_db)):
     try:
         payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
-        user_id: uuid.UUID = payload.get("sub")
+        user_id: str | None = payload.get("sub")    # payload.get() can potentially return None
         if user_id is None:
             raise HTTPException(status_code=401, detail="Invalid token payload")
     except JWTError:
@@ -39,9 +39,9 @@ async def get_current_user(token: str = Depends(get_token_from_cookie), session:
     
     user_result = await session.execute(
         select(User)
-        .where(User.id == user_id)
-    ) #.query(User).filter(User.id == int(user_id)).first()
-    
+        .where(User.id == uuid.UUID(user_id))
+    )
+        
     user = user_result.scalar_one_or_none()
     
     if not user:
