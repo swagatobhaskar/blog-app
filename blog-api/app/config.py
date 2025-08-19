@@ -13,9 +13,9 @@ class Settings(BaseSettings):
     debug: bool = True
     secret_key: str
     database_url: str    
-    # algorithm: str
-    # access_token_expire_minutes: int
-    # refresh_token_expire_days: int
+    algorithm: str
+    access_token_expire_minutes: int
+    refresh_token_expire_days: int
     allowed_origins: List[str] = allowed_origins_list
     
     model_config = SettingsConfigDict(
