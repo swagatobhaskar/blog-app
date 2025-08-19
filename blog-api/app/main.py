@@ -37,8 +37,8 @@ app.add_middleware(
 )
 
 app.include_router(blog.router)
-# app.include_router(user.router)
-# app.include_router(auth.router)
+app.include_router(user.router)
+app.include_router(auth.router)
 
 # Use settings as Dependency Injection
 @app.get("/")
