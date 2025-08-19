@@ -46,9 +46,12 @@ async def create_new_blog(new_blog_data: blog_schema.BlogCreate, session: AsyncS
         author = temp_user
     )
     session.add(new_blog)
+    # Commit the transaction (this flushes and persists the blog)
     await session.commit()
     
     # Query the saved blog with author eagerly loaded
+    # The new blog is now available with its ID
+    # Eager-load the author with the blog in the same query
     result = await session.execute(
         select(Blog)
         .options(selectinload(Blog.author))
@@ -63,32 +66,42 @@ async def create_new_blog(new_blog_data: blog_schema.BlogCreate, session: AsyncS
 async def update_blog(blog_id: uuid.UUID, updated_blog_data: blog_schema.BlogUpdate, session: AsyncSession = Depends(get_db)):
 
     requested_blog_result = await session.execute(
-        select(Blog).where(Blog.id == blog_id)
+        select(Blog)
+        .options(selectinload(Blog.author))  # Eager load the author
+        .where(Blog.id == blog_id)
     )
     
     requested_blog = requested_blog_result.scalar_one_or_none()
-    print("requested_blog::", requested_blog)
     if not requested_blog:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Blog with this id not found!")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Blog with this id not found!"
+        )
     
     try:
+        # Update the blog attributes if provided
         if updated_blog_data.title:
             requested_blog.title = updated_blog_data.title
         if updated_blog_data.content:
             requested_blog.content = updated_blog_data.content
-        if updated_blog_data.is_draft:
+        if updated_blog_data.is_draft:  # is not None
             requested_blog.is_draft = updated_blog_data.is_draft
-        
+                
         await session.commit()
         
-        result = await session.execute(
-            select(Blog)
-            .options(selectinload(Blog.author))
-            .where(Blog.id == requested_blog.id)
-        )
+        # The object is already updated, and we have eager-loaded the author, so return the updated blog
+        # return requested_blog (already eagerly loaded with the author)
+        return requested_blog
     
-        patched_blog = result.scalars().first()
-        return patched_blog
+        # NOT NEEDED since we eager loaded with author previously
+        # result = await session.execute(
+        #     select(Blog)
+        #     .options(selectinload(Blog.author))
+        #     .where(Blog.id == requested_blog.id)
+        # )
+        # patched_blog = result.scalars().first()
+        # return patched_blog
+        
         
     except SQLAlchemyError as e:
         await session.rollback()
