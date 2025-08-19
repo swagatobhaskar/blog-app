@@ -19,7 +19,7 @@ settings = get_settings()
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
-@router.post("/register", response_model=auth_schema.UserOutWithToken, status_code=status.HTTP_201_CREATED)
+@router.post("/signup", response_model=auth_schema.UserOutWithToken, status_code=status.HTTP_201_CREATED)
 async def register(
     response: Response,
     new_user_data: user_schema.UserCreate,
@@ -187,13 +187,13 @@ async def refresh_token(response: Response, request: Request, session: AsyncSess
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token missing")
     
     try:
+        import uuid
         payload = jwt.decode(refresh_token_from_cookie, settings.secret_key, algorithms=[settings.algorithm])
         user_id = payload.get("sub")
         if user_id is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token!")
 
-        # user = db.query(User).filter(User.id == int(user_id)).first()
-        result = await session.execute(select(User).where(User.id == user_id))
+        result = await session.execute(select(User).where(User.id == uuid.UUID(user_id)))
         user = result.scalar_one_or_none()
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found!")

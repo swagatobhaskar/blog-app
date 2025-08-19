@@ -1,99 +1,113 @@
 from fastapi import HTTPException, Request, Depends, APIRouter, Query, status
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select
+from typing import cast
+import uuid
+# import logging
 
-from app.dependencies import get_db#, get_current_user, verify_csrf
+from app.dependencies import get_db, get_current_user, verify_csrf
 from app.database.models import User
 from app.schema import user_schema
-# # from app.utils import security
+from app.database.session import AsyncSession
+from app.utils import security
 from app.config import get_settings
 
 settings = get_settings()
 
 router = APIRouter(prefix="/api/user", tags=["user"]) #, dependencies=[Depends(verify_csrf)])
 
-# @router.get("/", response_model=user_schema.UserOut, status_code=status.HTTP_200_OK)
-# async def user_profile(current_user: User = Depends(get_current_user)): # request: Request, 
-#     # print("Headers at /api/user : ", request.headers)
-#     # query_params = request.query_params
-#     # print("COOKIES at /api/user :", request.cookies)
-#     # body = await request.json() if request.method == "POST" else None
-#     # return {
-#     #     "current_user": current_user,
-#     #     "headers": headers,
-#     #     "query_params": query_params,
-#     #     "cookies": cookies,
-#     #     "body": body,
-#     # }
-#     return current_user
+@router.get("/", response_model=user_schema.UserOut, status_code=status.HTTP_200_OK)
+async def user_profile(current_user: User = Depends(get_current_user)): # request: Request, 
+    # print("Headers at /api/user : ", request.headers)
+    # query_params = request.query_params
+    # print("COOKIES at /api/user :", request.cookies)
+    # body = await request.json() if request.method == "POST" else None
+    # return {
+    #     "current_user": current_user,
+    #     "headers": headers,
+    #     "query_params": query_params,
+    #     "cookies": cookies,
+    #     "body": body,
+    # }
+    return current_user
 
 
-# @router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
-# def delete_user(
-#     current_user: User = Depends(get_current_user),
-#     db: Session = Depends(get_db)
-# ):
-#     try:
-#         db.delete(current_user)
-#         db.commit()
-#         # return {"message": "Account deleted successfully."}
-#     except IntegrityError:
-#         # Catch integrity error (e.g., foreign key constraint violation)
-#         db.rollback()
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST,
-#             detail="Cannot delete user due to linked records."
-#         )
-#     except Exception as e:
-#         # Catch all other exceptions
-#         db.rollback()
-#         logging.exception("Failed to delete user")
-#         raise HTTPException(
-#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#             detail="Could not delete user, please try again!"
-#         )
+@router.delete("/", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_user(
+    current_user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_db)
+):
+    try:
+        await session.delete(current_user)
+        await session.commit()
+        # return {"message": "Account deleted successfully."}
+    except IntegrityError:
+        # Catch integrity error (e.g., foreign key constraint violation)
+        await session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot delete user due to linked records."
+        )
+    except Exception as e:
+        # Catch all other exceptions
+        await session.rollback()
+        # logging.exception("Failed to delete user")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Could not delete user, please try again!"
+        )
 
 
-# @router.patch("/", response_model=user_schema.UpdateProfileResponse, status_code=status.HTTP_200_OK)
-# def update_profile(
-#     updated_user: user_schema.UserPatch,
-#     db: Session = Depends(get_db),
-#     current_user: User = Depends(get_current_user)
-# ):
-#     try:
-#         db_user = db.query(User).filter(User.id == current_user.id).first()
-#         if not db_user:
-#             raise HTTPException(status_code=404, detail="User not found!")
+@router.patch("/", response_model=user_schema.UpdateProfileResponse, status_code=status.HTTP_200_OK)
+async def update_profile(
+    updated_user_data: user_schema.UserPatch,
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    try:
+        result = await session.execute(
+            select(User).where(User.id == current_user.id)
+        )
+        fetched_user = result.scalar_one_or_none()
         
-#         if updated_user.fname:
-#             db_user.fname = updated_user.fname
-#         if updated_user.lname:
-#             db_user.lname = updated_user.lname
+        if not fetched_user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found!")
         
-#         if updated_user.email:
-#             existing_user = db.query(User).filter(User.email == updated_user.email).first()
-#             if existing_user:
-#                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email is already taken!")
-#             db_user.email = updated_user.email
+        if updated_user_data.email:
+            # Check if new email is already taken
+            result = await session.execute(
+                select(User).where(User.email == updated_user_data.email)
+            )
+            existing_user = result.scalar_one_or_none()
+            # Make sure the email isn't used by a different user
+            if existing_user:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email is already taken!")
+            
+            fetched_user.email = updated_user_data.email
 
-#         # Update password if old_password is provided
-#         if updated_user.old_password:
-#             # Verify old password
-#             if not security.verify_password(updated_user.old_password, db_user.hashed_password):
-#                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect old password!")
+        # Update password if old_password is provided
+        if updated_user_data.old_password:
+            # Verify old password
+            if not security.verify_password(updated_user_data.old_password, fetched_user.hashed_password):
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect old password!")
 
-#             # Hash the new password before saving it
-#             db_user.hashed_password = security.hash_password(updated_user.new_password)
+            # Hash the new password before saving it
+            # Use cast(str, ...) to tell the type checker "this is now a string."
+            # And, not None, as is in the schema- Optional[str].
+            # Since, hash_password() doesn't accept None.
+            fetched_user.hashed_password = security.hash_password(cast(str, updated_user_data.new_password))
 
-#         db.commit()
-#         db.refresh(db_user)
+        await session.commit()
+        await session.refresh(fetched_user)
 
-#         return {
-#             "message": "Profile updated successfully.",
-#             "status_code": status.HTTP_200_OK,
-#             "user": db_user
-#         }
+        return {
+            "message": "Profile updated successfully.",
+            "status_code": status.HTTP_200_OK,
+            "user": fetched_user
+        }
     
-#     except Exception as e:
-#         db.rollback()
-#         raise HTTPException(status_code=500, detail="Failed to update user information")
+    except Exception as e:
+        await session.rollback()
+        print("e:: ", e)
+        raise HTTPException(status_code=500, detail="Failed to update user information")
     
