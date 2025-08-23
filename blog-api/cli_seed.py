@@ -3,11 +3,13 @@ import sys
 import asyncio
 from random import randint
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 
 from app.database.session import engine, AsyncSessionLocal, Base
-from app.database.models import User, Blog
+from app.database.models import User, Blog, Topic
 
 # If tables are not created yet, run this once to create the tables:
+# DON'T RUN THESE IF USING ALEMBIC
 async def init_models():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)  # Optional: drop tables first
@@ -15,7 +17,6 @@ async def init_models():
 
 # ---------------------------------------------------
 # Users
-
 async def create_user(email):
     async with AsyncSessionLocal() as session:
         rand_digits = randint(100, 1000)
@@ -32,8 +33,22 @@ async def get_users():
         return result.scalars().all()
 
 # ---------------------------------------------------
-# Blogs
+# Topics
+async def create_topic(name, description=None):
+    async with AsyncSessionLocal() as session:
+        new_topic = Topic(name=name, description=description or "")
+        session.add(new_topic)
+        await session.commit()
+        await session.refresh(new_topic)
+        return new_topic
+    
+async def get_topics():
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(Topic))
+        return result.scalars().all()
 
+# ---------------------------------------------------
+# Blogs
 async def create_blog():
     import uuid
     
@@ -65,6 +80,9 @@ async def main():
         print("  python cmd_sql.py user_create <email>")
         print("  python cmd_sql.py user_list")
         print("---" * 20)
+        print("  python cmd_sql.py topic_create")
+        print("  python cmd_sql.py topic_list")
+        print("---" * 20)
         print("  python cmd_sql.py blog_create")
         print("  python cmd_sql.py blog_list")
         return
@@ -88,6 +106,20 @@ async def main():
         for user in users:
             print(f"ID={user.id}, Email={user.email}")
             
+    elif command == "topic_create":
+        name = input("Topic Name: ")
+        description = input("Description (optional): ")
+        try:
+            topic = await create_topic(name=name, description=description)
+            print(f"Topic created: ID={topic.id}, Name={topic.name}")
+        except IntegrityError:
+            print(f"Topic with name '{name}' already exists.")
+    
+    elif command == "topic_list":
+        topics = await get_topics()
+        for topic in topics:
+            print(f"ID={topic.id}, Name={topic.name}")
+    
     elif command == "blog_create":
         await create_blog()
         print(f"New blog created.")

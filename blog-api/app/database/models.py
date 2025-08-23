@@ -29,6 +29,9 @@ blog_topic_association = Table(
     Column('topic_id', Uuid(as_uuid=True), ForeignKey('topics.id'), primary_key=True)
 )
 
+# server_default=func.now()
+# That's great for DB-level timestamps. Just make sure your DB supports timezone-aware timestamps (SQLite doesn't).
+
 class Blog(Base):
     __tablename__ = "blogs"
     
@@ -37,13 +40,15 @@ class Blog(Base):
         primary_key=True,
         default=uuid.uuid4
     )
-    title: Mapped[str] = mapped_column(String, nullable=False)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
     content: Mapped[str] = mapped_column(String)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
     is_draft: Mapped[bool] = mapped_column(Boolean, default=True, server_default="false", nullable=False)
     # many-to-one relation with User
-    author_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    author_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("users.id"), nullable=False
+    )
     author: Mapped["User"] = relationship(back_populates="blogs")
     # many-to-many relation with Topic
     topics: Mapped[List["Topic"]] = relationship(secondary=blog_topic_association, back_populates="blogs", lazy="selectin")
@@ -60,7 +65,7 @@ class Topic(Base):
         default=uuid.uuid4
     )
     name: Mapped[str] = mapped_column(String, unique=True, nullable=False)
-    description: Mapped[str] = mapped_column(Text)
+    description: Mapped[str] = mapped_column(Text) # nullable=True
     # Many-to-many relation with Blog
     blogs: Mapped[List["Blog"]] = relationship(secondary=blog_topic_association, back_populates="topics", lazy="selectin")
     

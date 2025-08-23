@@ -2,11 +2,12 @@ import os
 import subprocess
 import asyncio
 from sqlalchemy import select, func
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import OperationalError
 
-from app.database.session import AsyncSessionLocal #, Base, engine
-from app.database.models import User, Blog
+from app.database.session import AsyncSessionLocal
+from app.database.models import User, Blog, Topic
 
 ENV = os.getenv("ENV", "development")
 
@@ -49,8 +50,47 @@ async def seed_blogs(session):
     else:
         print("⚠️ blogs already exist. Skipping.")
     
-async def seed_tags(session):
-    pass
+async def seed_topics(session):
+    if await is_table_empty(session, Topic):
+        print("Seeding Topics 🏷️")
+        
+        topic1 = Topic(name="Tech", description="All about technology.")
+        topic2 = Topic(name="Life", description="Life experiences and stories.")
+        topic3 = Topic(name="Travel", description="Travel diaries and tips.")
+        topic4 = Topic(name="misc", description="")
+        
+        session.add_all([topic1, topic2, topic3, topic4])
+        await session.commit()
+        print("Topics Seeded Successfully ✅.")
+    else:
+        print("⚠️ topics already exist. Skipping.")
+
+async def associate_blogs_topics(session):
+    # Fetch blogs and topics
+    result = await session.execute(select(Blog).options(selectinload(Blog.topics)))
+    blogs = result.scalars().all()
+    
+    result = await session.execute(select(Topic))
+    topics = result.scalars().all()
+    
+    topic_dict = {topic.name: topic for topic in topics}
+    
+    # Associate first blog with "Tech" and "Life" if it exists
+    if blogs:
+        blogs[0].topics.append(topic_dict.get("Tech"))
+        blogs[0].topics.append(topic_dict.get("Life"))
+        
+    # Associate second blog with "Travel" if it exists
+    if len(blogs) > 1:
+        blogs[1].topics.append(topic_dict.get("Travel"))
+        
+    # Associate third blog with "misc" and "Tech" if it exists
+    if len(blogs) > 2:
+        blogs[2].topics.append(topic_dict.get("misc"))
+        blogs[2].topics.append(topic_dict.get("Tech"))
+        
+    await session.commit()
+    print("Associated Blogs with Topics ✅.")
 
 async def main():
     if ENV != "development":
@@ -68,22 +108,25 @@ async def main():
     try:
         async with AsyncSessionLocal() as session:
             await seed_users(session)
-            await seed_tags(session)
+            await seed_topics(session)
             await seed_blogs(session)
+            await associate_blogs_topics(session)
             
     except OperationalError as e:
         if "no such table" in str(e):
             print("⚠️  DB is empty! Running Alembic migrations ...⚙️")
             subprocess.run(["alembic", "upgrade", "head"])
+            print("✅ Migrations complete!")
+            print("Resuming seeding ... 🪴")
             
             # ✅ Re-create the session AFTER migration!
             async with AsyncSessionLocal() as session:
                 await seed_users(session)
-                await seed_tags(session)
+                await seed_topics(session)
                 await seed_blogs(session)
+                await associate_blogs_topics(session)
         else:
             raise
     
 if __name__ == '__main__':
     asyncio.run(main())
-    
