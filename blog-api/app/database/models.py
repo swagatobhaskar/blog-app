@@ -2,7 +2,7 @@ import os
 import uuid
 from datetime import datetime
 from typing import List
-from sqlalchemy import String, ForeignKey, Text, func, DateTime, Boolean, Uuid
+from sqlalchemy import String, ForeignKey, Text, func, DateTime, Boolean, Uuid, Table, Column
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 
@@ -22,6 +22,13 @@ class User(Base):
         return f"<User(id={self.id}, email={self.email})>"
     
 
+blog_topic_association = Table(
+    'blog_topic_association',
+    Base.metadata,
+    Column('blog_id', Uuid(as_uuid=True), ForeignKey('blogs.id'), primary_key=True),
+    Column('topic_id', Uuid(as_uuid=True), ForeignKey('topics.id'), primary_key=True)
+)
+
 class Blog(Base):
     __tablename__ = "blogs"
     
@@ -38,7 +45,25 @@ class Blog(Base):
     # many-to-one relation with User
     author_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     author: Mapped["User"] = relationship(back_populates="blogs")
+    # many-to-many relation with Topic
+    topics: Mapped[List["Topic"]] = relationship(secondary=blog_topic_association, back_populates="blogs", lazy="selectin")
     
     def __repr__(self) -> str:
         return f"<Blog(id={self.id}, title={self.title[:20]})>"
+
+class Topic(Base):
+    __tablename__ = "topics"
+    
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4
+    )
+    name: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    description: Mapped[str] = mapped_column(Text)
+    # Many-to-many relation with Blog
+    blogs: Mapped[List["Blog"]] = relationship(secondary=blog_topic_association, back_populates="topics", lazy="selectin")
+    
+    def __repr__(self) -> str:
+        return f"<Topic(id={self.id}, name={self.name})>"
     
