@@ -36,31 +36,34 @@ async def get_blog_by_id(blog_id: uuid.UUID, session: AsyncSession = Depends(get
 @router.post('/', response_model=blog_schema.BlogOut, status_code=status.HTTP_201_CREATED)
 async def create_new_blog(new_blog_data: blog_schema.BlogCreate, session: AsyncSession = Depends(get_db)):
     temp_user_result = await session.execute(
-        select(User).limit(1)
+        select(User).limit(1)   # .order_by(User.id)
     )
     temp_user = temp_user_result.scalars().first()
     
     new_blog = Blog(
         title = new_blog_data.title,
         content = new_blog_data.content,
-        author = temp_user
+        author_id = temp_user.id
     )
     session.add(new_blog)
-    # Commit the transaction (this flushes and persists the blog)
-    await session.commit()
-    
-    # Query the saved blog with author eagerly loaded
-    # The new blog is now available with its ID
-    # Eager-load the author with the blog in the same query
-    result = await session.execute(
-        select(Blog)
-        .options(selectinload(Blog.author))
-        .where(Blog.id == new_blog.id)
-    )
-    
-    new_saved_blog = result.scalars().first()
-    return new_saved_blog
-
+    try:
+        # Commit the transaction (this flushes and persists the blog)
+        await session.commit()
+        await session.refresh(new_blog, attribute_names=["author"])  # Refresh to get the generated ID and other defaults
+        return new_blog
+    except IntegrityError:
+        await session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Integrity error: Possibly duplicate blog title."
+        )
+    except SQLAlchemyError:
+        await session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Database error occurred."
+        )
+        
 
 @router.patch('/{blog_id}', response_model=blog_schema.BlogOut, status_code=status.HTTP_200_OK)
 async def update_blog(blog_id: uuid.UUID, updated_blog_data: blog_schema.BlogUpdate, session: AsyncSession = Depends(get_db)):
@@ -91,6 +94,7 @@ async def update_blog(blog_id: uuid.UUID, updated_blog_data: blog_schema.BlogUpd
         
         # The object is already updated, and we have eager-loaded the author, so return the updated blog
         # return requested_blog (already eagerly loaded with the author)
+        await session.refresh(requested_blog)  # Refresh to get the latest data
         return requested_blog
     
         # NOT NEEDED since we eager loaded with author previously
@@ -101,7 +105,6 @@ async def update_blog(blog_id: uuid.UUID, updated_blog_data: blog_schema.BlogUpd
         # )
         # patched_blog = result.scalars().first()
         # return patched_blog
-        
         
     except SQLAlchemyError as e:
         await session.rollback()
@@ -117,7 +120,7 @@ async def delete_blog(blog_id: uuid.UUID, session: AsyncSession = Depends(get_db
     )
     
     requested_blog = requested_blog_result.scalar_one_or_none()
-    print("requested_blog::", requested_blog)
+    # print("requested_blog::", requested_blog)
     if not requested_blog:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Blog with this id not found!")
     
