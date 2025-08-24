@@ -1,7 +1,9 @@
-import Image from "next/image";
+import BlogListComponent from "@/components/bloglist";
 
-export default function Home() {
+export default async function Home() {
   return (
-    <div></div>
+    <main>
+      <BlogListComponent />
+    </main>
   );
 }
