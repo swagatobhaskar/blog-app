@@ -1,9 +1,28 @@
-import BlogListComponent from "@/components/bloglist";
+import { Blog } from "@/lib/types/blog"
+
+import { BLOG_API_URL } from "@/lib/constants/constants"
+import BlogListItem from "@/components/blog_item"
 
 export default async function Home() {
-  return (
-    <main className="sm:w-full md:w-2/3 lg:w-1/3 mx-auto p-4">
-      <BlogListComponent />
-    </main>
-  );
+  const res = await fetch(
+        // `${process.env.NEXT_PUBLIC_API_URL}/blog`,
+        BLOG_API_URL,
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            cache: 'default', // what will it be for blogs?
+        }
+    )
+
+    const blogs: Blog[] = await res.json()
+
+    return (
+        <div className="">
+            {blogs.map((blog) => (
+                <BlogListItem key={blog.id} blog={blog} />
+            ))}
+        </div>  
+    )
 }
