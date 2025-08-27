@@ -1,6 +1,7 @@
 import { Key } from "react"
-import { Topic } from "./topic"
-export interface Blog {
+import Topic from "./topic"
+
+export default interface Blog {
     id: Key, //String,
     title: String,
     content: String,

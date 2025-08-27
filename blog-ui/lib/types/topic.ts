@@ -1,6 +1,6 @@
 import { Key } from "react"
 
-export interface Topic {
+export default interface Topic {
     id: Key,
     name: String,
     description: String

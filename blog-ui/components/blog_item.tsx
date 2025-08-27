@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { Topic } from "@/lib/types/topic"
-import { Blog } from "@/lib/types/blog"
+import Topic from "@/lib/types/topic"
+import Blog from "@/lib/types/blog"
 
 export default function BlogListItem({blog}: {blog: Blog}) {
     return (

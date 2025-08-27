@@ -1,4 +1,4 @@
-import { Blog } from "@/lib/types/blog"
+import Blog from "@/lib/types/blog"
 
 import { BLOG_API_URL } from "@/lib/constants/constants"
 import BlogListItem from "@/components/blog_item"
