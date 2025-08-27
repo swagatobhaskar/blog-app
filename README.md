@@ -17,3 +17,5 @@
 !Tag, or Category option
 
 > (Plan to include): Tests, CI/CD, Linting, Pre-commit-hook,
+
+npm install gray-matter remark remark-html, to parse .md and convert it to HTML.
