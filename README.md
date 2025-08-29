@@ -19,3 +19,6 @@
 > (Plan to include): Tests, CI/CD, Linting, Pre-commit-hook,
 
 npm install gray-matter remark remark-html, to parse .md and convert it to HTML.
+
+> Installed Quill rich text editor: $ npm install quill@2.0.3
+> Installed uuid with: $ npm install uuid
