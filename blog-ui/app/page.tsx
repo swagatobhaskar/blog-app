@@ -5,8 +5,7 @@ import BlogListItem from "@/components/blog_item"
 
 export default async function Home() {
   const res = await fetch(
-        // `${process.env.NEXT_PUBLIC_API_URL}/blog`,
-        BLOG_API_URL,
+        `${BLOG_API_URL}`,
         {
             method: 'GET',
             headers: {
