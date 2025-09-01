@@ -3,10 +3,10 @@ import Topic from "./topic"
 
 export default interface Blog {
     id: Key, //String,
-    title: String,
-    content: String,
+    title: string,
+    content: string,
     created_at: Date,
     updated_at: Date,
-    is_draft: Boolean,
+    is_draft: boolean,
     topics: Topic[]
 }
