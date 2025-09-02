@@ -1,5 +1,7 @@
 "use client"
 
+import { Button } from "./button";
+
 type ButtonPrimaryProps = {
     text?: string;
     onclick?: () => void;
@@ -8,8 +10,8 @@ type ButtonPrimaryProps = {
 
 export default function ButtonEdit({text, onclick}: ButtonPrimaryProps) {
     return (
-        <button
-            className="bg-white px-1 py-1 rounded cursor-pointer hover:bg-gray-200 mt-4"
+        <Button
+            className="bg-white px-1 py-1 rounded cursor-pointer hover:bg-gray-100 mt-4"
             onClick={onclick}
         >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -18,6 +20,6 @@ export default function ButtonEdit({text, onclick}: ButtonPrimaryProps) {
                     <line x1="3" y1="22" x2="21" y2="22"></line>
             </svg>
             {text && <span className="font-sans">{text}</span>}
-        </button>
+        </Button>
     );
 }
