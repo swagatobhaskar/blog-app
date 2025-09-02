@@ -1,11 +1,10 @@
 // server component
 
-import TopicCreateForm from "@/components/topic-create-form";
 import TopicModifyButtons from "@/components/topic-modify-btns";
 import { TOPICS_API_URL } from "@/lib/constants/constants";
 import Topic from "@/lib/types/topic";
-import {Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card'
-import NewTopicBtn from "@/components/new-topic-btn";
+import {Card, CardContent, CardFooter, CardHeader, CardTitle} from '@/components/ui/card'
+import NewTopicCreateDialog from "@/components/new-topic-dialog";
 
 export default async function TopicPage() {
     const res = await fetch(`${TOPICS_API_URL}`)
@@ -13,7 +12,9 @@ export default async function TopicPage() {
 
     return (
         <>
-            <NewTopicBtn />
+            <div className="my-4 flex justify-end">
+                <NewTopicCreateDialog />
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 {topics.map((topic) => (
                     <Card
