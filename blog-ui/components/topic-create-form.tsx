@@ -5,6 +5,10 @@ import { useState } from "react"
 import { TOPICS_API_URL } from "@/lib/constants/constants"
 import ButtonPrimary from "./ui/button-primary"
 import ButtonSecondary from "./ui/button-secondary"
+import { Button } from "./ui/button"
+import { Input } from "./ui/input"
+import { Textarea } from "./ui/textarea"
+import { Label } from "./ui/label"
 
 export default function TopicCreateForm() {
     const [ name, setName ] = useState<string>('')
@@ -24,15 +28,17 @@ export default function TopicCreateForm() {
     }
 
     const handleCancel = () => {
-        alert("Cancelled!")
+        setName('');
+        setDescription('');
+        alert("Cancelled!");
     }
 
     return (
-        <div className="">
+        <div className="w-full md:w-2/3 lg:w-1/2 mx-auto p-4 shadow-sm rounded-md">
             <form onSubmit={handleSubmit}>
                 <div className="">
-                    <label className="">Name:</label>
-                    <input
+                    <Label className="text-md">Name:</Label>
+                    <Input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -41,16 +47,15 @@ export default function TopicCreateForm() {
                     />
                 </div>
                 <div className="">
-                    <label className="">Description:</label>
-                    <input
-                        type="text"
+                    <Label className="text-md">Description:</Label>
+                    <Textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="(optional)"
                         className=""
                     />
                 </div>
-                <div className="flex flex-row gap-2">
+                <div className="flex flex-row gap-2 justify-center">
                     <ButtonSecondary text="Cancel" onclick={handleCancel} />
                     <ButtonPrimary text="Create Topic" />
                 </div>

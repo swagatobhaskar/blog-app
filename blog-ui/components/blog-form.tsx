@@ -6,6 +6,8 @@ import dynamic from "next/dynamic"
 import ButtonCancel from "./ui/button-cancel"
 import ButtonPrimary from "./ui/button-primary"
 import ButtonSecondary from "./ui/button-secondary"
+import { Input } from "./ui/input"
+import { Label } from "./ui/label"
 
 export const QuillEditor = dynamic(() => import('@/components/quillEditor'), {ssr: false})
 
@@ -38,7 +40,8 @@ export default function BlogForm({
     return (
         <div className="w-full md:mx-w-[60vw] lg:max-w-[50vw] mx-auto">
             <h2 className="italic text-2xl font-semibold mb-2 text-center">{initialTitle ? 'Edit Blog' : 'Write a New Blog'}</h2>
-            <input
+            <Label className="text-lg">Title</Label>
+            <Input
                 type="text"
                 id="title"
                 placeholder="Title"
@@ -50,7 +53,7 @@ export default function BlogForm({
             {/* Draft/Publish */}
             <div className="flex flex-row gap-4 justify-end mt-2">
                 <ButtonCancel text="Cancel" onclick={handleCancel} />
-                <ButtonSecondary text="Draft" onclick={handleDraft} />
+                <ButtonSecondary text="Save Draft" onclick={handleDraft} />
                 <ButtonPrimary text="Publish" onclick={handlePublish} />
             </div>
             <h2>Live Preview:</h2>

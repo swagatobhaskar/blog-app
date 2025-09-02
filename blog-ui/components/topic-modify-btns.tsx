@@ -10,7 +10,7 @@ export default function TopicModifyButtons() {
     const handleDeleteTopic = async () => {}// open modal
 
     return (
-        <div className="flex flex-row gap-2 p-2 justify-center">
+        <div className="flex flex-row gap-2 justify-center">
             <ButtonEdit />
             <ButtonDelete />
         </div>
