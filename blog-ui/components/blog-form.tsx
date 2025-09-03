@@ -51,7 +51,7 @@ export default function BlogForm({
             />
             <QuillEditor onChange={handleChange} value={content} />
             {/* Draft/Publish */}
-            <div className="flex flex-row gap-4 justify-end mt-2">
+            <div className="flex flex-row gap-4 justify-center lg:justify-end mt-2">
                 <ButtonCancel text="Cancel" onclick={handleCancel} />
                 <ButtonSecondary text="Save Draft" onclick={handleDraft} />
                 <ButtonPrimary text="Publish" onclick={handlePublish} />

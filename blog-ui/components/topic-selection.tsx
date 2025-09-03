@@ -45,7 +45,7 @@ export default function TopicSelection({ onChangeSelectedTopics }: TopicSelectio
                 className={selectedTopics.length >= 5 ? 'bg-gray-100 cursor-not-allowed' : ''}
             />
             {/* Topics Search Result */}
-            <div className='grid grid-cols-3'>
+            <div className='grid grid-cols-3 gap-x-2 gap-y-2 mt-2'>
                 { topicSearchResult.length > 0 && (
                     topicSearchResult.map((topic: Topic) => (
                         <div
@@ -57,7 +57,7 @@ export default function TopicSelection({ onChangeSelectedTopics }: TopicSelectio
                                 }
                             className={selectedTopics.find(t => t.id === topic.id) ? 'opacity-50 pointer-events-none' : ''}
                         >
-                            <div className='inline-block bg-slate-200 m-1 px-2 py-1 rounded-md
+                            <div className='inline-block bg-slate-200 px-2 py-1 rounded-md
                                 text-center cursor-pointer hover:bg-slate-300 text-sm'
                             >
                                 {topic.name}

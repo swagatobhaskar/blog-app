@@ -33,8 +33,9 @@ export default function RootLayout({
         }
       >
         <Header />
-        <main className="flex-grow w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-12 py-6">
-          {children}  
+        <main className="flex-grow w-full"> {/* max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-12 py-6"> */}
+          {/* {children} */}
+          <div className="w-full">{children}</div>
         </main>
         <Footer />
       </body>
