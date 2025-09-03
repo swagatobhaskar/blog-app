@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, HTTPException, Depends
+from fastapi import APIRouter, status, HTTPException, Depends, Query
 from fastapi.responses import JSONResponse
 from typing import List
 from sqlalchemy import select, Uuid
@@ -105,3 +105,22 @@ async def delete_topic(topic_id: uuid.UUID, session: AsyncSession = Depends(get_
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Database error occurred."
         )
+
+@router.get('/search/', response_model=List[topic_schema.TopicOut], status_code=status.HTTP_200_OK)
+async def search_topics(query: str = Query(..., min_length=1), session: AsyncSession = Depends(get_db)):
+    try:
+        stmt = select(Topic).where(Topic.name.ilike(f'%{query}%')).order_by(Topic.name.asc())  # or Topic.id.desc()
+        result = await session.execute(stmt)
+        topics = result.scalars().all()
+        return topics
+    except SQLAlchemyError as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Database error occurred."
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred."
+        )
+        
