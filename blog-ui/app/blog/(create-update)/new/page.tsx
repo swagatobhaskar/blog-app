@@ -1,9 +1,12 @@
 'use client'
 
+import { useState } from "react";
 import BlogForm from "@/components/blog-form";
-import CategorySelection from "@/components/category-selection";
+import TopicSelection from "@/components/topic-selection";
+import Topic from "@/lib/types/topic";
 
 export default function Home() {
+    const [ topicsToUse, setTopicsToUse ] = useState<Topic[]>([])
 
     const handleSaveDraft = async (title: string, content: string) => {
         alert("Draft clicked!")
@@ -20,7 +23,7 @@ export default function Home() {
     return (
         <div className="flex flex-row justify-between w-full">
             <div className="px-4 mt-10 flex-1/4">
-                <CategorySelection />
+                <TopicSelection onChangeSelectedTopics={setTopicsToUse} />
             </div>
             <div className="flex-3/4">
                 <BlogForm
