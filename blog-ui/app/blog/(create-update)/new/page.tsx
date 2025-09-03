@@ -1,6 +1,7 @@
 'use client'
 
 import BlogForm from "@/components/blog-form";
+import CategorySelection from "@/components/category-selection";
 
 export default function Home() {
 
@@ -17,10 +18,17 @@ export default function Home() {
     }
 
     return (
-        <BlogForm
-            onPublish={handlePublish}
-            onSaveDraft={handleSaveDraft}
-            onCancel={handleCancel}
-        />
+        <div className="flex flex-row justify-between w-full">
+            <div className="px-4 mt-10 flex-1/4">
+                <CategorySelection />
+            </div>
+            <div className="flex-3/4">
+                <BlogForm
+                    onPublish={handlePublish}
+                    onSaveDraft={handleSaveDraft}
+                    onCancel={handleCancel}
+                />
+            </div>
+        </div>
     )
 }
