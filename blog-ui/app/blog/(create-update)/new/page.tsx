@@ -4,16 +4,20 @@ import { useState } from "react";
 import BlogForm from "@/components/blog-form";
 import TopicSelection from "@/components/topic-selection";
 import Topic from "@/lib/types/topic";
+import Blog from "@/lib/types/blog";
 
 export default function NewBlogPage() {
     const [ topicsToUse, setTopicsToUse ] = useState<Topic[]>([])
 
     const handleSaveDraft = async (title: string, content: string) => {
         alert("Draft clicked!")
+        // associate topics with the blog
     }
 
     const handlePublish = async (title: string, content: string) => {
         alert("Publish Clicked!")
+        // associate topics with the new blog
+
     }
 
     const handleCancel = async () => {

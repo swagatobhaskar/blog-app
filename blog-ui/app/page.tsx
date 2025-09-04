@@ -18,7 +18,7 @@ export default async function Home() {
     const blogs: Blog[] = await res.json()
 
     return (
-        <div className="">
+        <div className="w-full lg:w-3/6 mx-auto px-10 mt-5 lg:mt-10">
             {blogs.map((blog) => (
                 <BlogListItem key={blog.id} blog={blog} />
             ))}
