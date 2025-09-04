@@ -11,7 +11,7 @@ export default async function TopicPage() {
     const topics: Topic[] = await res.json();
 
     return (
-        <>
+        <div className="mx-auto w-5/6 lg:w-4/6">
             <div className="my-4 flex justify-end">
                 <NewTopicCreateDialog />
             </div>
@@ -35,6 +35,6 @@ export default async function TopicPage() {
                     </Card>
                 ))}
             </div> 
-        </>
+        </div>
     );
 }
