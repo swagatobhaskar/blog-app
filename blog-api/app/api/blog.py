@@ -5,10 +5,11 @@ from sqlalchemy import select, Uuid
 from sqlalchemy.orm import selectinload, joinedload
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 import uuid
+import logging
 
 from app.dependencies import get_db
 from app.database.session import AsyncSession
-from app.database.models import User, Blog
+from app.database.models import User, Blog, Topic
 from app.schema import blog_schema
 
 router = APIRouter(prefix='/api/blog', tags=['blogs'])
@@ -40,31 +41,54 @@ async def create_new_blog(new_blog_data: blog_schema.BlogCreate, session: AsyncS
     )
     temp_user = temp_user_result.scalars().first()
     
+    selected_topics = []
+    
+    if new_blog_data.topic_ids:
+        result = await session.execute(
+            select(Topic).where(Topic.id.in_(new_blog_data.topic_ids))
+        )
+        selected_topics = result.scalars().all()
+        
+        if len(selected_topics) != len(set(new_blog_data.topic_ids)):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Some topics not found"
+            )
+    
+        # print("Selected topics:", selected_topics)
+        # logger = logging.getLogger(__name__)
+        # logger.info(f"Selected topics: {selected_topics}")
+    
     new_blog = Blog(
         title = new_blog_data.title,
         content = new_blog_data.content,
-        author_id = temp_user.id
+        is_draft = new_blog_data.is_draft,
+        author_id = temp_user.id,
+        topics = selected_topics
     )
     session.add(new_blog)
+    
     try:
         # Commit the transaction (this flushes and persists the blog)
         await session.commit()
-        await session.refresh(new_blog, attribute_names=["author"])  # Refresh to get the generated ID and other defaults
+        await session.refresh(new_blog, attribute_names=["author", "topics"])  # Refresh to get the generated ID and other defaults
         return new_blog
+    
     except IntegrityError:
         await session.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Integrity error: Possibly duplicate blog title."
         )
-    except SQLAlchemyError:
+        
+    except SQLAlchemyError as e:
         await session.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Database error occurred."
+            detail=f"Database error {str(e)}"
         )
         
-
+        
 @router.patch('/{blog_id}', response_model=blog_schema.BlogOut, status_code=status.HTTP_200_OK)
 async def update_blog(blog_id: uuid.UUID, updated_blog_data: blog_schema.BlogUpdate, session: AsyncSession = Depends(get_db)):
 
@@ -74,29 +98,43 @@ async def update_blog(blog_id: uuid.UUID, updated_blog_data: blog_schema.BlogUpd
         .where(Blog.id == blog_id)
     )
     
-    requested_blog = requested_blog_result.scalar_one_or_none()
+    requested_blog = requested_blog_result.scalar_one_or_none() # result.scalars().first() ?
+    
     if not requested_blog:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Blog with this id not found!"
         )
     
-    try:
-        # Update the blog attributes if provided
-        if updated_blog_data.title:
-            requested_blog.title = updated_blog_data.title
-        if updated_blog_data.content:
-            requested_blog.content = updated_blog_data.content
-        if updated_blog_data.is_draft:  # is not None
-            requested_blog.is_draft = updated_blog_data.is_draft
-                
-        await session.commit()
+    # Update the blog attributes if provided
+    if updated_blog_data.title:
+        requested_blog.title = updated_blog_data.title
+    if updated_blog_data.content:
+        requested_blog.content = updated_blog_data.content
+    if updated_blog_data.is_draft:  # is not None
+        requested_blog.is_draft = updated_blog_data.is_draft
         
+    if updated_blog_data.topic_ids is not None:
+
+        topic_result = await session.execute(
+            select(Topic).where(Topic.id.in_(updated_blog_data.topic_ids))
+        )
+        updated_topics = topic_result.scalars().all()
+        print("Updated topics:", updated_topics)
+        if len(updated_topics) != len(set(updated_blog_data.topic_ids)):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Some topics not found")
+        
+        requested_blog.topics = list(updated_topics)   # Replace existing associations
+    
+    try:
+        await session.commit()
+    
         # The object is already updated, and we have eager-loaded the author, so return the updated blog
         # return requested_blog (already eagerly loaded with the author)
         await session.refresh(requested_blog)  # Refresh to get the latest data
         return requested_blog
-    
+
         # NOT NEEDED since we eager loaded with author previously
         # result = await session.execute(
         #     select(Blog)
@@ -105,7 +143,7 @@ async def update_blog(blog_id: uuid.UUID, updated_blog_data: blog_schema.BlogUpd
         # )
         # patched_blog = result.scalars().first()
         # return patched_blog
-        
+    
     except SQLAlchemyError as e:
         await session.rollback()
         raise HTTPException(
