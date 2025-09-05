@@ -1,6 +1,6 @@
 'use client'
 
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useRef} from 'react'
 import Topic from '@/lib/types/topic'
 import { Input } from "./ui/input"
 import { TOPICS_API_URL } from '@/lib/constants/constants'
@@ -12,9 +12,21 @@ type TopicSelectionProps = {
 
 export default function TopicSelection({ onChangeSelectedTopics }: TopicSelectionProps) {
 
+    const inputRef = useRef<HTMLInputElement>(null)
     const [ searchText, setSearchText ] = useState<string>('')
     const [ selectedTopics, setSelectedTopics ] = useState<Topic[]>([])
     const [ topicSearchResult, setTopicSearchResult ] = useState<Topic[]>([])
+
+    const handleEscKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Escape') {
+            // Clear the input
+            if (inputRef.current) {
+                inputRef.current.value = ""
+                setSearchText("")
+                inputRef.current?.blur() // Unfocus the input
+            }
+        }
+    }
 
     useEffect(() => {
         const fetchTopics = async () => {
@@ -42,6 +54,8 @@ export default function TopicSelection({ onChangeSelectedTopics }: TopicSelectio
                 placeholder="Enter Search Term"
                 disabled={selectedTopics.length >= 5}
                 onChange={(e)=>setSearchText(e.target.value)}
+                ref={inputRef}
+                onKeyDown={handleEscKeyDown}
                 className={selectedTopics.length >= 5 ? 'bg-gray-100 cursor-not-allowed' : ''}
             />
             {/* Topics Search Result */}
