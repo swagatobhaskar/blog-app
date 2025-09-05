@@ -1,7 +1,7 @@
 'use client'
 
-import ButtonDelete from "./ui/button-delete";
-import ButtonEdit from "./ui/button-edit";
+import ButtonDelete from "../ui/button-delete";
+import ButtonEdit from "../ui/button-edit";
 
 export default function TopicModifyButtons() {
 

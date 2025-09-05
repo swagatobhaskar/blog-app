@@ -1,10 +1,10 @@
 // server component
 
-import TopicModifyButtons from "@/components/topic-modify-btns";
+import TopicModifyButtons from "@/components/topic/topic-modify-btns";
 import { TOPICS_API_URL } from "@/lib/constants/constants";
 import Topic from "@/lib/types/topic";
 import {Card, CardContent, CardFooter, CardHeader, CardTitle} from '@/components/ui/card'
-import NewTopicCreateDialog from "@/components/new-topic-dialog";
+import NewTopicCreateDialog from "@/components/topic/new-topic-dialog";
 
 export default async function TopicPage() {
     const res = await fetch(`${TOPICS_API_URL}`)

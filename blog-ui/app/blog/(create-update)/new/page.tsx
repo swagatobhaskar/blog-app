@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BlogForm from "@/components/blog-form";
-import TopicSelection from "@/components/topic-selection";
+import TopicSelection from "@/components/topic/topic-selection";
 import Topic from "@/lib/types/topic";
 
 import SubmitBlog from "@/lib/submitBlogHelper";
@@ -36,11 +36,11 @@ export default function NewBlogPage() {
     }
 
     return (
-        <div className="flex flex-col lg:flex-row justify-between w-full lg:w-[80%] lg:mx-auto">
-            <div className="px-4 mt-10 w-full lg:w-1/4">
+        <div className="flex flex-col lg:flex-row justify-between w-full lg:w-[90%] lg:mx-auto">
+            <div className="px-4 mt-10 w-full lg:w-1/6">
                 <TopicSelection onChangeSelectedTopics={setTopicsToUse} />
             </div>
-            <div className="w-full lg:w-3/4">
+            <div className="w-full lg:w-5/6">
                 { isSubmitting && <p>Saving...</p> }
                 <BlogForm
                     onPublish={handlePublish}

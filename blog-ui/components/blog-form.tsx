@@ -38,7 +38,7 @@ export default function BlogForm({
     }
 
     return (
-        <div className="w-full md:mx-w-[60vw] lg:max-w-[50vw] mx-auto">
+        <div className="mx-auto w-full lg:max-w-[70vw]"> {/*w-full md:mx-w-[60vw] lg:max-w-[50vw] mx-auto */}
             <h2 className="italic text-2xl font-semibold mb-2 text-center">{initialTitle ? 'Edit Blog' : 'Write a New Blog'}</h2>
             <Label className="text-lg">Title</Label>
             <Input
