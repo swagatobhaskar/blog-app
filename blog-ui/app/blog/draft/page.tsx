@@ -18,10 +18,13 @@ export default async function DraftsList() {
     const draftBlogs: Blog[] = await res.json()
 
     return (
-        <div className="w-full lg:w-3/6 mx-auto px-10 mt-5 lg:mt-10">
-            {draftBlogs.map((blog) => (
-                <BlogListItem key={blog.id} blog={blog} />
-            ))}
+        <div className="w-full lg:w-3/6 mx-auto">
+            <h1 className="text-center text-2xl font-light my-5">Draft Blogs</h1>
+            <div className="px-10 mt-5 lg:mt-10">
+                {draftBlogs.map((blog) => (
+                    <BlogListItem key={blog.id} blog={blog} />
+                ))}
+            </div>
         </div>  
     )
 }
