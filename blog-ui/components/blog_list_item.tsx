@@ -1,10 +1,11 @@
 import Link from "next/link"
 import Topic from "@/lib/types/topic"
 import Blog from "@/lib/types/blog"
+import BlogControlButtons from "./blog-control-btns";
 
 export default function BlogListItem({blog}: {blog: Blog}) {
     return (
-        <div key={blog.id} className="mb-4 border-b border-gray-400">
+        <div key={blog.id} className="mb-4 py-4 border-b border-gray-200">
             { blog.is_draft ? (
                 <Link href={`/blog/draft/${blog.id}`}>
                     <h2 className="text-2xl font-bold mb-2">{blog.title}</h2>
@@ -23,6 +24,7 @@ export default function BlogListItem({blog}: {blog: Blog}) {
                     </span>
                 ))}
             </div>
+            <BlogControlButtons blog={blog} />
         </div>
     );
 }

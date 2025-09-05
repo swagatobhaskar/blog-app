@@ -1,7 +1,9 @@
+// Server component
 import Blog from "@/lib/types/blog"
 
 import { BLOG_API_URL } from "@/lib/constants/constants"
 import BlogListItem from "@/components/blog_list_item"
+import BlogControlButtons from "@/components/blog-control-btns"
 
 export default async function DraftsList() {
   const res = await fetch(
