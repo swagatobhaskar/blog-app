@@ -16,11 +16,52 @@ router = APIRouter(prefix='/api/blog', tags=['blogs'])
 
 @router.get('/', response_model=List[blog_schema.BlogOut], status_code=status.HTTP_200_OK)
 async def get_all_blogs(session: AsyncSession = Depends(get_db)):
-    results = await session.execute(
-        select(Blog).options(joinedload(Blog.author))   # Use joinedload if you always want author with Blog
-    )
-    return results.scalars().all()
+    try:
+        results = await session.execute(
+            select(Blog)
+            # If is_draft can be NULL in the DB and NULL can be treated like False.
+            .where((Blog.is_draft == False) | (Blog.is_draft.is_(None)))
+            .options(joinedload(Blog.author))   # Use joinedload if you always want author with Blog
+        )
+        return results.scalars().all()
+    except SQLAlchemyError as e:
+        # Handle any DB-related error
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Database error occurred"
+        )
 
+    except Exception as e:
+        # Handle any other unexpected error
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred"
+        )
+
+@router.get('/draft', response_model=List[blog_schema.BlogOut], status_code=status.HTTP_200_OK)
+async def get_all_draft_blogs(session: AsyncSession = Depends(get_db)):
+    try:
+        print("IN TRY")
+        results = await session.execute(
+            select(Blog)
+            .where(Blog.is_draft.is_(True))
+            .options(joinedload(Blog.author))   # Use joinedload if you always want author with Blog
+        )
+        return results.scalars().all()
+    
+    except SQLAlchemyError as e:
+        # Handle any DB-related error
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Database error occurred"
+        )
+
+    except Exception as e:
+        # Handle any other unexpected error
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred"
+        )
 
 @router.get('/{blog_id}', response_model=blog_schema.BlogOut, status_code=status.HTTP_200_OK)
 async def get_blog_by_id(blog_id: uuid.UUID, session: AsyncSession = Depends(get_db)):
@@ -171,4 +212,33 @@ async def delete_blog(blog_id: uuid.UUID, session: AsyncSession = Depends(get_db
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Blog deletion failed. Please try again."
         )
+                
+@router.get('/draft/{blog_id}', response_model=blog_schema.BlogOut, status_code=status.HTTP_200_OK)
+async def get_draft_blog_by_id(blog_id: uuid.UUID, session: AsyncSession = Depends(get_db)):
+    try:
+        stmt = (
+            select(Blog)
+            # To be extra explicit over `Blog.is_draft == True`
+            .where(Blog.id == blog_id, Blog.is_draft.is_(True))
+            .options(selectinload(Blog.author))
+        )
+        result = await session.execute(stmt)
+        draft_blog = result.scalar_one_or_none()
         
+        if not draft_blog:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Draft blog not found")
+        return draft_blog
+    
+    except SQLAlchemyError as e:
+        # Handle any DB-related error
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Database error occurred"
+        )
+
+    except Exception as e:
+        # Handle any other unexpected error
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An unexpected error occurred"
+        )
