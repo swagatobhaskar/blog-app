@@ -13,7 +13,6 @@ export default function BlogControlButtons({blog}: {blog: Blog}) {
     const [ isLoading, setIsLoading ] = useState<boolean>(false)
 
     const handlePublishBlog = async () => {
-        alert("Publish clicked")
         try {
             setIsLoading(true)
             const res = await fetch(`${BLOG_API_URL}/${blog.id}`, {
@@ -24,7 +23,7 @@ export default function BlogControlButtons({blog}: {blog: Blog}) {
                 }
             })
             if (!res.ok) {return}
-            else {router.push(`/blog/${blog.id}`)}
+            else {router.refresh()}
         } catch (err) {
             console.error(err)
         } finally {
@@ -43,7 +42,7 @@ export default function BlogControlButtons({blog}: {blog: Blog}) {
                 }
             })
             if (!res.ok) {return}
-            else {router.push(`/blog/${blog.id}`)}
+            else {router.push(`/`)}
         } catch (err) {
             console.error(err)
         } finally {
@@ -74,17 +73,18 @@ export default function BlogControlButtons({blog}: {blog: Blog}) {
                 <div className="w-[50%] flex flex-row justify-evenly">
                     <ButtonCancel
                         text="Delete"
-                        onclick={handleDeleteBlog}
+                        onClick={handleDeleteBlog}
                         disabled={isLoading}
                     />
                     <ButtonSecondary
                         text="Edit"
-                        onclick={() => router.push(`/blog/edit/${blog.id}`)}
+                        onClick={() => router.push(`/blog/edit/${blog.id}`)}
                         disabled={isLoading}
                     />
                     <ButtonPrimary
-                        text="Publish"
-                        onclick={handlePublishBlog}
+                        // text="Publish"
+                        text={isLoading ? "Publishing..." : "Publish"}
+                        onClick={handlePublishBlog}
                         disabled={isLoading}
                     />
                 </div>
@@ -92,17 +92,18 @@ export default function BlogControlButtons({blog}: {blog: Blog}) {
                 <div className="w-[50%] flex flex-row justify-evenly">
                     <ButtonCancel
                         text="Delete"
-                        onclick={handleDeleteBlog}
+                        onClick={handleDeleteBlog}
                         disabled={isLoading}
                     />
                     <ButtonSecondary
                         text="Edit"
-                        onclick={() => router.push(`/blog/edit/${blog.id}`)}
+                        onClick={() => router.push(`/blog/edit/${blog.id}`)}
                         disabled={isLoading}
                     />
                     <ButtonPrimary
-                        text="Send to Drafts"
-                        onclick={handleSaveBlogAsDraft}
+                        text={isLoading ? "Saving to Drafts..." : "Save to Drafts"}
+                        // text="Send to Drafts"
+                        onClick={handleSaveBlogAsDraft}
                         disabled={isLoading}
                     />
                 </div>
