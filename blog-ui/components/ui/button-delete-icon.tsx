@@ -4,15 +4,15 @@ import { Button } from "./button";
 
 type ButtonPrimaryProps = {
     text?: string;
-    onclick?: () => void;
+    onClick?: () => void;
     // icon?: React.ReactNode;
 }
 
-export default function ButtonDelete({text, onclick}: ButtonPrimaryProps) {
+export default function ButtonDelete({text, onClick}: ButtonPrimaryProps) {
     return (
         <Button
             className="bg-white px-1 py-1 rounded cursor-pointer hover:bg-red-300 mt-4"
-            onClick={onclick}
+            onClick={onClick}
         >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                 stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -5,7 +5,7 @@ import { Button } from "./button";
 
 type ButtonPrimaryProps = {
     text: string;
-    onclick?: () => void;
+    onClick?: () => void;
     icon?: React.ReactNode;
     disabled?: boolean;
  }& React.ComponentPropsWithoutRef<"button">
@@ -23,11 +23,11 @@ type ButtonPrimaryProps = {
 // }
 
 const ButtonPrimary = React.forwardRef<HTMLButtonElement, ButtonPrimaryProps>(
-  ({ text, icon, onclick, disabled, ...props }, ref) => {
+  ({ text, icon, onClick, disabled, ...props }, ref) => {
     return (
       <Button
         ref={ref}
-        onClick={onclick}
+        onClick={onClick}
         className="bg-blue-300 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400 mt-4"
         disabled={disabled}
         {...props}
