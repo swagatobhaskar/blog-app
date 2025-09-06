@@ -2,6 +2,7 @@
 import { notFound } from "next/navigation";
 import { BLOG_API_URL } from "@/lib/constants/constants";
 import Blog from "@/lib/types/blog";
+import BlogControlButtons from "@/components/blog-control-btns";
 
 export default async function DraftBlogItem({params}: {params: {id: string}}) {
     const res = await fetch(`${BLOG_API_URL}/draft/${params.id}`, {
@@ -15,9 +16,12 @@ export default async function DraftBlogItem({params}: {params: {id: string}}) {
     
     return (
         <div key={draftBlog.id} className="">
-            <h1 className="text-3xl">{draftBlog.title}</h1>
-            {/* <div className="prose max-w-none">{draftBlog.content}</div> */}
-            <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: draftBlog.content }} />
+            <div className="text-center">
+                <h1 className="text-3xl">{draftBlog.title}</h1>
+                {/* <div className="prose max-w-none">{draftBlog.content}</div> */}
+                <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: draftBlog.content }} />
+            </div>
+            <BlogControlButtons blog={draftBlog} />
         </div>
     )
 }
