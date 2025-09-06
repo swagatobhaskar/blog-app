@@ -62,7 +62,7 @@ export default function TopicCreateForm({onClose}: Props) {
                     />
                 </div>
                 <div className="flex gap-2 justify-center">
-                    <ButtonSecondary text="Cancel" onclick={handleCancel} />
+                    <ButtonSecondary text="Cancel" onClick={handleCancel} />
                     <ButtonPrimary text="Create Topic" />
                 </div>
             </form>
