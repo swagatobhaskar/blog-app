@@ -152,7 +152,7 @@ async def update_blog(blog_id: uuid.UUID, updated_blog_data: blog_schema.BlogUpd
         requested_blog.title = updated_blog_data.title
     if updated_blog_data.content:
         requested_blog.content = updated_blog_data.content
-    if updated_blog_data.is_draft:  # is not None
+    if updated_blog_data.is_draft is not None: # Use is not None to allow both True and False to go through
         requested_blog.is_draft = updated_blog_data.is_draft
         
     if updated_blog_data.topic_ids is not None:
