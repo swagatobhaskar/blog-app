@@ -19,6 +19,7 @@ export default async function Home() {
 
     return (
         <div className="w-full lg:w-3/6 mx-auto px-10 mt-5 lg:mt-10">
+            {blogs.length === 0 && <p className="font-light text-2xl">Nothing to see here...</p>}
             {blogs.map((blog) => (
                 <BlogListItem key={blog.id} blog={blog} />
             ))}
