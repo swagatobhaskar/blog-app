@@ -27,6 +27,7 @@ const ButtonPrimary = React.forwardRef<HTMLButtonElement, ButtonPrimaryProps>(
     return (
       <Button
         ref={ref}
+        onClick={onclick}
         className="bg-blue-300 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-400 mt-4"
         disabled={disabled}
         {...props}
