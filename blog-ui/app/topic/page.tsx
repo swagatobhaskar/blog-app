@@ -30,7 +30,7 @@ export default async function TopicPage() {
                             <p className="text-sm font-light text-center">{topic.description}</p>
                         </CardContent>
                         <CardFooter className="flex justify-center">
-                            <TopicModifyButtons />
+                            <TopicModifyButtons topic={topic} />
                         </CardFooter>
                     </Card>
                 ))}
