@@ -78,7 +78,7 @@ export default function BlogControlButtons({blog}: {blog: Blog}) {
                     />
                     <ButtonSecondary
                         text="Edit"
-                        onClick={() => router.push(`/blog/edit/${blog.id}`)}
+                        onClick={() => router.push(`/blog/${blog.id}/edit`)}
                         disabled={isLoading}
                     />
                     <ButtonPrimary
@@ -97,7 +97,9 @@ export default function BlogControlButtons({blog}: {blog: Blog}) {
                     />
                     <ButtonSecondary
                         text="Edit"
-                        onClick={() => router.push(`/blog/edit/${blog.id}`)}
+                        onClick={() => {
+                            router.push(`/blog/${blog.id}/edit`)}
+                        }
                         disabled={isLoading}
                     />
                     <ButtonPrimary
