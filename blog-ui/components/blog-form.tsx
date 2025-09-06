@@ -9,7 +9,7 @@ import ButtonSecondary from "./ui/button-secondary"
 import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 
-export const QuillEditor = dynamic(() => import('@/components/quillEditor'), {ssr: false})
+export const QuillEditor = dynamic(() => import('@/components/quill/quillEditor'), {ssr: false})
 
 interface BlogFormProps {
     initialTitle?: string;
@@ -52,9 +52,9 @@ export default function BlogForm({
             <QuillEditor onChange={handleChange} value={content} />
             {/* Draft/Publish */}
             <div className="flex flex-row gap-4 justify-center lg:justify-end mt-2">
-                <ButtonCancel text="Cancel" onclick={handleCancel} />
-                <ButtonSecondary text="Save Draft" onclick={handleDraft} />
-                <ButtonPrimary text="Publish" onclick={handlePublish} />
+                <ButtonCancel text="Cancel" onClick={handleCancel} />
+                <ButtonSecondary text="Save Draft" onClick={handleDraft} />
+                <ButtonPrimary text="Publish" onClick={handlePublish} />
             </div>
             <h2>Live Preview:</h2>
             <div dangerouslySetInnerHTML={{ __html: content}} />
