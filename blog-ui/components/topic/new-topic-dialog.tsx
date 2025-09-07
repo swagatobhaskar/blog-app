@@ -4,7 +4,7 @@ import { useState } from "react"
 import TopicCreateForm from "./topic-create-form"
 import { Button } from "../ui/button"
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "../ui/dialog"
-import ButtonPrimary from "../ui/button-primary"
+import ButtonPrimary from "../ui/buttons/button-primary"
 
 export default function NewTopicCreateDialog() {
     const [open, setOpen] = useState(false)

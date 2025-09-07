@@ -1,5 +1,5 @@
-import { BLOG_API_URL } from "./constants/constants";
-import Topic from "./types/topic";
+import { BLOG_API_URL } from "@/lib//constants/constants";
+import Topic from '@/lib/types/topic';
 
 const SubmitBlog = async ({
     title,

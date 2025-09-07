@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react' 
-import BlogForm from '@/components/blog-form'
+import BlogForm from '@/components/ui/blog/blog-form'
 import { BLOG_API_URL } from '@/lib/constants/constants';
 import Blog from '@/lib/types/blog';
 

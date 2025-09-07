@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Button } from "./button";
+import { Button } from "../button";
 
 type ButtonPrimaryProps = {
     text: string;

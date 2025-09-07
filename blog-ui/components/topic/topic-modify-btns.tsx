@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from "react";
-import ButtonDelete from "../ui/button-delete-icon";
-import ButtonEdit from "../ui/button-edit-icon";
+import ButtonDelete from "../ui/buttons/button-delete-icon";
+import ButtonEdit from "../ui/buttons/button-edit-icon";
 import {
     Dialog,
     DialogContent,
@@ -15,34 +15,26 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Topic from "@/lib/types/topic";
+import * as apiTopic from '@/lib/api/apiTopic';
 
 export default function TopicModifyButtons({topic}: {topic: Topic}) {
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [topicName, setTopicName] = useState(topic.name);
     const [topicDescription, setTopicDescription] = useState(topic.description);
-    
-    const handleEditTopicModal = () => {
-        console.log("Saving topic:", topicName);
-        setEditOpen(true);
-    }
-
-    const handleDeleteTopicModal = () => {
-        console.log("Deleting topic...");
-        setDeleteOpen(true);
-    }
 
     const handleSaveTopicEdit = async () => {
         alert("In savehandler")
     }
 
-    const handleTopicDelete = async () => {
+    const handleTopicDelete = (topic.id) => {
         alert("In DeleteHandler")
+        apiTopic.DeleteTopic(topic.id)
     }
 
     return (
         <div className="flex flex-row gap-2 justify-center">
-            <ButtonEdit onClick={handleEditTopicModal} />
+            <ButtonEdit onClick={() => setEditOpen(true)} />
             {/* Trigger Edit Modal */}
             <Dialog open={editOpen} onOpenChange={setEditOpen}>
                 <DialogContent>
@@ -67,7 +59,7 @@ export default function TopicModifyButtons({topic}: {topic: Topic}) {
                 </DialogContent>
             </Dialog>
             {/* Trigger Delete Confirmation Modal */}
-            <ButtonDelete onClick={handleDeleteTopicModal} />
+            <ButtonDelete onClick={() => setDeleteOpen(true)} />
             <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                 <DialogContent>
                     <DialogHeader>
@@ -76,7 +68,7 @@ export default function TopicModifyButtons({topic}: {topic: Topic}) {
                     </DialogHeader>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setDeleteOpen(false)}>Cancel</Button>
-                        <Button variant="destructive" onClick={handleTopicDelete}>Delete</Button>
+                        <Button variant="destructive" onClick={() => handleTopicDelete(topic.id)}>Delete</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

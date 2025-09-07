@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import BlogForm from "@/components/blog-form";
+import BlogForm from "@/components/ui/blog/blog-form";
 import TopicSelection from "@/components/topic/topic-selection";
 import Topic from "@/lib/types/topic";
 
-import SubmitBlog from "@/lib/submitBlogHelper";
+import SubmitBlog from "@/lib/api/submitBlogHelper";
 
 export default function NewBlogPage() {
     const router = useRouter()
