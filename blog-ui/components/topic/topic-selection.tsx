@@ -4,7 +4,7 @@ import {useState, useEffect, useRef} from 'react'
 import Topic from '@/lib/types/topic'
 import { Input } from "../ui/input"
 import { TOPICS_API_URL } from '@/lib/constants/constants'
-import RemoveIcon from '../ui/remove-icon'
+import RemoveIcon from '../ui/remove-svg-icon'
 
 type TopicSelectionProps = {
     onChangeSelectedTopics: (topic: Topic[]) => void
