@@ -10,17 +10,15 @@ export const createTopic = ({name, description}: Omit<Topic, 'id'>) => apiHandle
     `${TOPICS_API_URL}`, {
         method: "POST",
         body: JSON.stringify({name, description})
-    }
-)
+    })
 
-export const UpdateTopic = (id: string, data: Partial<Topic>) => apiHandler<Topic>(
+export const updateTopic = (id: string, data: Partial<Topic>) => apiHandler<Topic>(
     `${TOPICS_API_URL}/${id}`, {
         method: 'PATCH',
         body: JSON.stringify(data)
-    }
-)
+    })
 
-export const DeleteTopic = (id: string) =>
+export const deleteTopic = (id: string) =>
     apiHandler<{ success: boolean }>(
         `${TOPICS_API_URL}/${id}`, {
             method: 'DELETE'
