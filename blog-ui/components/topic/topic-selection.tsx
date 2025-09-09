@@ -7,16 +7,18 @@ import { TOPICS_API_URL } from '@/lib/constants/constants'
 import RemoveIcon from '../ui/remove-svg-icon'
 
 type TopicSelectionProps = {
+    assignedTopics?: Topic[];
     onChangeSelectedTopics: (topic: Topic[]) => void
 }
 
-export default function TopicSelection({ onChangeSelectedTopics }: TopicSelectionProps) {
+export default function TopicSelection({ assignedTopics, onChangeSelectedTopics }: TopicSelectionProps) {
 
     const inputRef = useRef<HTMLInputElement>(null)
     const [ searchText, setSearchText ] = useState<string>('')
-    const [ selectedTopics, setSelectedTopics ] = useState<Topic[]>([])
+    const [ selectedTopics, setSelectedTopics ] = useState<Topic[]>([]) 
     const [ topicSearchResult, setTopicSearchResult ] = useState<Topic[]>([])
-
+    const prevSelectedTopicRef = useRef<Topic[]>([]);
+    
     const handleEscKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Escape') {
             // Clear the input
@@ -29,7 +31,20 @@ export default function TopicSelection({ onChangeSelectedTopics }: TopicSelectio
     }
 
     useEffect(() => {
+        if ( assignedTopics && assignedTopics.length > 0 ) {
+            setSelectedTopics(assignedTopics)
+        }
+    }, [assignedTopics])
+
+    useEffect(() => {
         const fetchTopics = async () => {
+            if (!searchText.trim()) {
+                // Clear results if search text is empty
+                // Only fetch when searchText.trim() has actual content.
+                setTopicSearchResult([])
+                return;
+            }
+
             try{
                 const res = await fetch(`${TOPICS_API_URL}/search/?query=${searchText}`)
                 const returnedTopics: Topic[] = await res.json()
@@ -41,9 +56,19 @@ export default function TopicSelection({ onChangeSelectedTopics }: TopicSelectio
         fetchTopics()
     }, [searchText])
 
+    const areTopicsEqual = (a: Topic[], b: Topic[]) => {
+        if (a.length !== b.length) return false;
+        return a.every(topicA => b.some(topicB => topicA.id === topicB.id));
+    }
+
     // Notify parent whenever the topic selection changes
+    // Use deep comparison before calling the parent callback.
+    // So, Parent is only notified when the actual content of the selection changes.
     useEffect(() => {
-        onChangeSelectedTopics(selectedTopics)
+        if (!areTopicsEqual(prevSelectedTopicRef.current, selectedTopics)) {
+            onChangeSelectedTopics(selectedTopics);
+            prevSelectedTopicRef.current = selectedTopics;
+        }
     }, [selectedTopics])
 
     return (
