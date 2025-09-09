@@ -2,17 +2,21 @@
 
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react' 
-import BlogForm from '@/components/ui/blog/blog-form'
+import BlogForm from '@/components/blog/blog-form'
 import { BLOG_API_URL } from '@/lib/constants/constants';
 import Blog from '@/lib/types/blog';
+import Topic from '@/lib/types/topic';
+import TopicSelection from '@/components/topic/topic-selection';
 
 export default function EditBlogPage() {
     const {id} = useParams<{id: string}>();
     const router = useRouter();
-    const [title, setTitle] = useState<string>('');
-    const [content, setContent] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const [ title, setTitle ] = useState<string>('');
+    const [ content, setContent ] = useState<string>('');
+    const [ topics, setTopics ] = useState<Topic[]>([]);
+    const [ editedTopics, setEditedTopics ] = useState<Topic[]>([]);
+    const [ loading, setLoading ] = useState<boolean>(true);
+    const [ error, setError ] = useState<string | null>(null);
 
     useEffect(() => {
         if (!id) return;
@@ -31,6 +35,7 @@ export default function EditBlogPage() {
 
                 setTitle(blog.title);
                 setContent(blog.content);
+                setTopics(blog.topics);
             } catch (err: any) {
                 console.error(err);
                 setError('Failed to load blog post.');
@@ -59,12 +64,20 @@ export default function EditBlogPage() {
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
     return (
-        <BlogForm
-            initialTitle={title}
-            initialContent={content}
-            onCancel={handleCancel}
-            onSaveDraft={handleSaveDraft}
-            onPublish={handlePublish}
-        />
+        <div className='flex flex-row w-[80%] mx-auto space-x-10'>
+            <TopicSelection
+                assignedTopics={topics}
+                onChangeSelectedTopics={(updatedTopics) => setEditedTopics(updatedTopics)}
+            />
+            <div className='w-[80%] mx-auto'>
+                <BlogForm
+                    initialTitle={title}
+                    initialContent={content}
+                    onCancel={handleCancel}
+                    onSaveDraft={handleSaveDraft}
+                    onPublish={handlePublish}
+                />
+            </div>
+        </div>
   );
 }

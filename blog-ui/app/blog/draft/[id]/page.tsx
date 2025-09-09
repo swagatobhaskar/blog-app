@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation";
 import { BLOG_API_URL } from "@/lib/constants/constants";
 import Blog from "@/lib/types/blog";
-import BlogControlButtons from "@/components/ui/blog/blog-control-btns";
+import BlogControlButtons from "@/components/blog/blog-control-btns";
 
 export default async function DraftBlogItem({params}: {params: {id: string}}) {
     const res = await fetch(`${BLOG_API_URL}/draft/${params.id}`, {

@@ -3,11 +3,11 @@
 import { useState } from "react"
 import dynamic from "next/dynamic"
 
-import ButtonCancel from "../buttons/button-cancel"
-import ButtonPrimary from "../buttons/button-primary"
-import ButtonSecondary from "../buttons/button-secondary"
-import { Input } from "../input"
-import { Label } from "../label"
+import ButtonCancel from "@/components/ui/buttons/button-cancel"
+import ButtonPrimary from "@/components/ui/buttons/button-primary"
+import ButtonSecondary from "@/components/ui/buttons/button-secondary"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 export const QuillEditor = dynamic(() => import('@/components/quill/quillEditor'), {ssr: false})
 

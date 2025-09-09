@@ -3,9 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Blog from "@/lib/types/blog";
-import ButtonCancel from "../buttons/button-cancel";
-import ButtonSecondary from "../buttons/button-secondary";
-import ButtonPrimary from "../buttons/button-primary";
+import ButtonCancel from "@/components/ui/buttons/button-cancel";
+import ButtonSecondary from "@/components/ui/buttons/button-secondary";
+import ButtonPrimary from "@/components/ui/buttons/button-primary";
 import { BLOG_API_URL } from "@/lib/constants/constants";
 
 export default function BlogControlButtons({blog}: {blog: Blog}) {
