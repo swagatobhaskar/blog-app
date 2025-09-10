@@ -14,10 +14,20 @@ export async function apiHandler<TResponse>(
 
     const res = await fetch(endpoint, config);
 
+    let errorData;
     if (!res.ok) {
-        const errorData = await res.json();
+        // const errorData = await res.json();
+        try {
+            errorData = await res.json();
+        } catch {
+            errorData = { message: res.statusText };
+        }
         throw new Error(errorData.message || 'API request failed');
     }
 
-    return res.json() as Promise<TResponse>;
+    try {
+        return await res.json(); // as Promise<TResponse>; (without using await in front)
+    } catch {
+        throw new Error('Failed to parse JSON response');
+    }
 }

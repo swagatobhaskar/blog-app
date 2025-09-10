@@ -6,10 +6,10 @@ export const getAllBlogs = () => apiHandler<Blog[]>(`${BLOG_API_URL}`)
 
 export const getBlogById = (id: string) => apiHandler<Blog>(`${BLOG_API_URL}/${id}`)
 
-export const createBlog = ({title, content, is_draft}: Omit<Blog, 'id'>) => apiHandler<Blog>(
+export const createBlog = (data: Omit<Blog, 'id'>) => apiHandler<Blog>(
     `${BLOG_API_URL}`, {
         method: "POST",
-        body: JSON.stringify({title, content, is_draft})
+        body: JSON.stringify(data)
     })
 
 export const updateBlog = (id: string, data: Partial<Blog>) => apiHandler<Blog>(
