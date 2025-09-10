@@ -2,7 +2,7 @@ import { Key } from "react"
 import Topic from "./topic"
 
 export default interface Blog {
-    id: Key, //String,
+    id: string, // key
     title: string,
     content: string,
     created_at: Date,
