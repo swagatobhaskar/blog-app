@@ -14,6 +14,8 @@ export const QuillEditor = dynamic(() => import('@/components/quill/quillEditor'
 interface BlogFormProps {
     initialTitle?: string;
     initialContent?: string;
+    userErrors: string[];
+    // !! BlogForm has nothing to do with Topics !!
     onSaveDraft: (title: string, content: string) => void;
     onPublish: (title: string, content: string) => void;
     onCancel: () => void;
@@ -22,6 +24,7 @@ interface BlogFormProps {
 export default function BlogForm({
   initialTitle = '',
   initialContent = '',
+  userErrors,
   onSaveDraft,
   onPublish,
   onCancel,
@@ -50,7 +53,13 @@ export default function BlogForm({
                 className="w-full border border-gray-300 rounded-md p-2 mb-4 text-lg"
             />
             <QuillEditor onChange={handleChange} value={content} />
-            {/* Draft/Publish */}
+            {/* Display Form Errors */}
+            { userErrors?.length > 0 && (
+                userErrors?.map(error => (
+                    <p className="block text-red-400 text-lg">{error}</p>
+                ))
+            )}
+            {/* Buttons */}
             <div className="flex flex-row gap-4 justify-center lg:justify-end mt-2">
                 <ButtonCancel text="Cancel" onClick={handleCancel} />
                 <ButtonSecondary text="Save Draft" onClick={handleDraft} />

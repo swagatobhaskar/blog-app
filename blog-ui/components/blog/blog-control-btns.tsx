@@ -6,16 +6,14 @@ import Blog from "@/lib/types/blog";
 import ButtonCancel from "@/components/ui/buttons/button-cancel";
 import ButtonSecondary from "@/components/ui/buttons/button-secondary";
 import ButtonPrimary from "@/components/ui/buttons/button-primary";
-import { BLOG_API_URL } from "@/lib/constants/constants";
 import HandleAction from "@/lib/handleAction";
-import { createBlog, publishDraftedBlog, savePublishedBlogAsDraft } from "@/lib/api/apiBlog";
+import { publishDraftedBlog, savePublishedBlogAsDraft, deleteBlog } from "@/lib/api/apiBlog";
 
 export default function BlogControlButtons({blog}: {blog: Blog}) {
     const router = useRouter()
     const [ loading, setLoading ] = useState<boolean>(false)
 
     const handlePublishBlog = async () => {
-        // const {id} = blog.id;
         const { data, error, success } = await HandleAction<Blog>(
             () => publishDraftedBlog(blog.id), 
             {
@@ -27,11 +25,8 @@ export default function BlogControlButtons({blog}: {blog: Blog}) {
 
         if (data) { // (success && data)
             router.refresh()
-            // do something if needed
-            // e.g.
             // Success: proceed with next steps
-            // router.push(`/blog/${data.slug}`); // Navigate to the new blog
-            // console.log('New blog created:', data);
+            // do something if needed            
         }
 
         // Use error if you want extra error handling (optional)
@@ -42,59 +37,31 @@ export default function BlogControlButtons({blog}: {blog: Blog}) {
         // console.error('Blog submission error:', error);
         // e.g. show detailed UI error message
         }
-        
-        // try {
-        //     setIsLoading(true)
-        //     const res = await fetch(`${BLOG_API_URL}/${blog.id}`, {
-        //         method: 'PATCH',
-        //         body: JSON.stringify({"is_draft": false}),
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         }
-        //     })
-        //     if (!res.ok) {return}
-        //     else {router.refresh()}
-        // } catch (err) {
-        //     console.error(err)
-        // } finally {
-        //     setIsLoading(false)
-        // }
     }
 
     const handleSaveBlogAsDraft = async () => {
-        try {
-            setLoading(true)
-            const res = await fetch(`${BLOG_API_URL}/${blog.id}`, {
-                method: 'PATCH',
-                body: JSON.stringify({"is_draft": true}),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            if (!res.ok) {return}
-            else {router.push(`/`)}
-        } catch (err) {
-            console.error(err)
-        } finally {
-            setLoading(false)
-        }
+        const { data, error, success } = await HandleAction(
+            () => savePublishedBlogAsDraft(blog.id), 
+            {
+                setLoading,
+                successMessage: "Blog saved as draft.",
+                errorMessage: "Could not save as draft.. please try again!"
+            }
+        )
+
+        if (data) {router.push('/')}
     }
 
     const handleDeleteBlog = async () => {
-        try {
-            setLoading(true)
-            const res = await fetch(`${BLOG_API_URL}/${blog.id}`, {
-                method: "DELETE"
-            })
-            if (res.ok) {
-                router.refresh()
-                // show toast "DELETED"
+        const { data, error, success } = await HandleAction(
+            ()=> deleteBlog(blog.id),
+            {
+                setLoading,
+                successMessage: "Blog deleted successfully.",
+                errorMessage: "Could not delete blog.. please try again!"
             }
-        } catch (err) {
-            console.error(err)
-        } finally {
-            setLoading(false)
-        }
+        )
+        if (data) {router.refresh()}
     }
 
     return (
