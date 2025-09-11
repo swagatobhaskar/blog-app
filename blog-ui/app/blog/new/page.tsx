@@ -2,32 +2,70 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import BlogForm from "@/components/ui/blog/blog-form";
+import BlogForm from "@/components/blog/blog-form";
 import TopicSelection from "@/components/topic/topic-selection";
 import Topic from "@/lib/types/topic";
-
-import SubmitBlog from "@/lib/api/submitBlogHelper";
+import { createBlog, createBlogAsDraft } from "@/lib/api/apiBlog";
+import HandleAction from "@/lib/handleAction";
 
 export default function NewBlogPage() {
     const router = useRouter()
     const [ topicsToUse, setTopicsToUse ] = useState<Topic[]>([])
     const [ isSubmitting, setIsSubmitting ] = useState<boolean>(false);
+    const [ userErrors, setUserErrors ] = useState<string[]>([]);
     
     const handleSaveDraft = async (title: string, content: string) => {
-        alert("Draft clicked!")
-        const new_blog = await SubmitBlog({title, content, isDraft: true, topicsToUse: topicsToUse });
-        router.push(`/blog/draft/${new_blog.id}`);
+        if (!title.trim()) {
+            setUserErrors(prev => prev.includes("Title is required!") // prevents duplication
+                ? prev : [...prev, "Title is required!"]
+            )
+            return;
+        }
+    
+        if (!content.trim()) {
+            setUserErrors(prev => prev.includes("Content is required")
+                ? prev : [...prev, "Content is required!"]
+            )
+            return;
+        }
+        const { data, error, success } = await HandleAction(
+            () => createBlogAsDraft(title, content, topicsToUse),
+            {
+                setLoading: setIsSubmitting,
+                successMessage: "Blog published from draft.",
+                errorMessage: "Could not publish blog.. please try again!"
+            }
+        )
+        if (data) {router.push(`/blog/draft/${new_blog.id}`)}
     }
 
-    const handlePublish = async (title: string, content: string) => {
-        // alert("Publish clicked!")
-        setIsSubmitting(true)
-        try {
-            const new_blog = await SubmitBlog({ title, content, isDraft: false, topicsToUse: topicsToUse });
-            router.push(`/blog/${new_blog.id}`);
-        } finally {
-            setIsSubmitting(false)
+    const handlePublish = async (
+        title: string,
+        content: string,
+    ) => {
+        if (!title.trim()) {
+            setUserErrors(prev => prev.includes("Title is required!") // prevents duplication
+                ? prev : [...prev, "Title is required!"]
+            )
+            return;
         }
+    
+        if (!content.trim()) {
+            setUserErrors(prev => prev.includes("Content is required")
+                ? prev : [...prev, "Content is required!"]
+            )
+            return;
+        }
+
+        const { data, error, success } = await HandleAction(
+            () => createBlog(title, content, topicsToUse),
+            {
+                setLoading: setIsSubmitting,
+                successMessage: "Blog published.",
+                errorMessage: "Could not publish blog.. please try again!"
+            }
+        )
+        if (data) {router.push(`/blog/${new_blog.id}`)}
     }
 
     const handleCancel = () => {
@@ -46,6 +84,7 @@ export default function NewBlogPage() {
                     onPublish={handlePublish}
                     onSaveDraft={handleSaveDraft}
                     onCancel={handleCancel}
+                    userErrors={userErrors.length > 0 ? userErrors : []}
                 />
             </div>
         </div>
