@@ -29,8 +29,9 @@ export async function generateStaticParams() {
 }
 
 export default async function BlogPage({params}: {params: {id: string}}) {
-    // const blog_id = params.id;
-    const res = await fetch(`${BLOG_API_URL}/${params.id}`, {
+    // Make sure params is awaited
+    const { id } = await params;
+    const res = await fetch(`${BLOG_API_URL}/${id}`, {
         method: 'GET',
         headers: {'Content-Type': 'application/json',},
         cache: "force-cache", // better performance if data updates infrequently
