@@ -36,7 +36,7 @@ export default function NewBlogPage() {
                 errorMessage: "Could not publish blog.. please try again!"
             }
         )
-        if (data) {router.push(`/blog/draft/${new_blog.id}`)}
+        if (success && data) {router.push(`/blog/draft/${data.id}`)}
     }
 
     const handlePublish = async (
@@ -65,7 +65,14 @@ export default function NewBlogPage() {
                 errorMessage: "Could not publish blog.. please try again!"
             }
         )
-        if (data) {router.push(`/blog/${new_blog.id}`)}
+        if (success && data) {
+            // Assuming `data` contains the newly created blog, and it has an `id`
+            console.log("HandlePublish DATA:: ", data);
+            router.push(`/blog/${data.id}`)
+        } else {
+            // Handle error if needed
+            console.error("Blog creation failed:", error);
+        }
     }
 
     const handleCancel = () => {
