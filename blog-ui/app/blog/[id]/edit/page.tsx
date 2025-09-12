@@ -3,10 +3,11 @@
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react' 
 import BlogForm from '@/components/blog/blog-form'
-import { BLOG_API_URL } from '@/lib/constants/constants';
 import Blog from '@/lib/types/blog';
 import Topic from '@/lib/types/topic';
 import TopicSelection from '@/components/topic/topic-selection';
+import { getBlogById, publishDraftedBlog, savePublishedBlogAsDraft } from '@/lib/api/apiBlog';
+import HandleAction from '@/lib/handleAction';
 
 export default function EditBlogPage() {
     const {id} = useParams<{id: string}>();
@@ -17,46 +18,88 @@ export default function EditBlogPage() {
     const [ editedTopics, setEditedTopics ] = useState<Topic[]>([]);
     const [ loading, setLoading ] = useState<boolean>(true);
     const [ error, setError ] = useState<string | null>(null);
+    const [ userErrors, setUserErrors ] = useState<string[]>([]);
 
     useEffect(() => {
         if (!id) return;
 
         const fetchBlog = async () => {
-            try {
-                setLoading(true);
-                // Replace with real API call
-                const res = await fetch(`${BLOG_API_URL}/${id}`)
-                
-                if (!res.ok) {
-                    throw new Error(`Failed to fetch blog post: ${res.status}`);
+            const { data, error, success } = await HandleAction(
+                () => getBlogById(id),
+                {
+                    setLoading: setLoading,
+                    errorMessage: "Failed to load the blog!"
                 }
-
-                const blog: Blog = await res.json();
-
-                setTitle(blog.title);
-                setContent(blog.content);
-                setTopics(blog.topics);
-            } catch (err: any) {
-                console.error(err);
-                setError('Failed to load blog post.');
-            } finally {
-                setLoading(false);
+            )
+            if (success && data) {
+                setTitle(data.title);
+                setContent(data.content);
+                setTopics(data.topics);
             }
         };
 
         fetchBlog();
     }, [id]);
 
-    const handleSaveDraft = async (title: string, content: string) => {
-        alert("Draft clicked!")
+    const handleSaveDraftFromPublish = async (title: string, content: string) => {
+        if (!title.trim()) {
+            setUserErrors(prev => prev.includes("Title is required!") // prevents duplication
+                ? prev : [...prev, "Title is required!"]
+            )
+            return;
+        }
+    
+        if (!content.trim()) {
+            setUserErrors(prev => prev.includes("Content is required")
+                ? prev : [...prev, "Content is required!"]
+            )
+            return;
+        }
+        const { data, error, success } = await HandleAction(
+            () => savePublishedBlogAsDraft(id), // !! not taking title, content, topics
+            {
+                setLoading: setLoading,
+                successMessage: "Blog published from draft.",
+                errorMessage: "Could not publish blog.. please try again!"
+            }
+        )
+        if (success && data) {router.push(`/blog/draft/${data.id}`)}
     }
 
-    const handlePublish = async (title: string, content: string) => {
-        alert("Publish Clicked!")
+    const handlePublishFromDraft = async (title: string, content: string) => {
+        if (!title.trim()) {
+            setUserErrors(prev => prev.includes("Title is required!") // prevents duplication
+                ? prev : [...prev, "Title is required!"]
+            )
+            return;
+        }
+    
+        if (!content.trim()) {
+            setUserErrors(prev => prev.includes("Content is required")
+                ? prev : [...prev, "Content is required!"]
+            )
+            return;
+        }
+
+        const { data, error, success } = await HandleAction(
+            () => publishDraftedBlog(id),   // !! not taking title, content, topics
+            {
+                setLoading: setLoading,
+                successMessage: "Blog published.",
+                errorMessage: "Could not publish blog.. please try again!"
+            }
+        )
+        if (success && data) {
+            router.push(`/blog/${data.id}`)
+        } else {
+            console.error("Blog creation failed:", error);
+        }
     }
 
     const handleCancel = async () => {
         // alert("Cancel Clicked!")
+        setTitle('')
+        setContent('')
         router.back()
     }
 
@@ -74,8 +117,9 @@ export default function EditBlogPage() {
                     initialTitle={title}
                     initialContent={content}
                     onCancel={handleCancel}
-                    onSaveDraft={handleSaveDraft}
-                    onPublish={handlePublish}
+                    onSaveDraft={handleSaveDraftFromPublish}
+                    onPublish={handlePublishFromDraft}
+                    userErrors={userErrors.length > 0 ? userErrors : []}
                 />
             </div>
         </div>
