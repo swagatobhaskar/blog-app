@@ -2,10 +2,11 @@
 import { notFound } from "next/navigation";
 import { BLOG_API_URL } from "@/lib/constants/constants";
 import Blog from "@/lib/types/blog";
-import BlogControlButtons from "@/components/blog/blog-control-btns";
+import RenderBlogAndOptionButtons from "@/components/blog/render_blog";
 
 export default async function DraftBlogItem({params}: {params: {id: string}}) {
-    const res = await fetch(`${BLOG_API_URL}/draft/${params.id}`, {
+    const { id } = params;
+    const res = await fetch(`${BLOG_API_URL}/draft/${id}`, {
             method: 'GET',
             headers: {'Content-Type': 'application/json',},
             cache: "force-cache", // better performance if data updates infrequently
@@ -15,13 +16,8 @@ export default async function DraftBlogItem({params}: {params: {id: string}}) {
     const draftBlog: Blog = await res.json()
     
     return (
-        <div key={draftBlog.id} className="">
-            <div className="text-center">
-                <h1 className="text-3xl">{draftBlog.title}</h1>
-                {/* <div className="prose max-w-none">{draftBlog.content}</div> */}
-                <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: draftBlog.content }} />
-            </div>
-            <BlogControlButtons blog={draftBlog} />
+        <div className="">
+            <RenderBlogAndOptionButtons blog={draftBlog} />
         </div>
     )
 }
