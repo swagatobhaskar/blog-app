@@ -67,7 +67,6 @@ export default function NewBlogPage() {
         )
         if (success && data) {
             // Assuming `data` contains the newly created blog, and it has an `id`
-            console.log("HandlePublish DATA:: ", data);
             router.push(`/blog/${data.id}`)
         } else {
             // Handle error if needed
@@ -77,7 +76,7 @@ export default function NewBlogPage() {
 
     const handleCancel = () => {
         // alert("Cancel Clicked!")
-        router.refresh()
+        router.back()
     }
 
     return (
