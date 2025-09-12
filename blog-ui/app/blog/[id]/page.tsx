@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation"
 import Blog from "@/lib/types/blog"
 import {BLOG_API_URL} from "@/lib/constants/constants"
-import BlogControlButtons from "@/components/blog/blog-control-btns";
+import RenderBlogAndOptionButtons from "@/components/blog/render_blog";
 
 export async function generateStaticParams() {
     try {
@@ -29,8 +29,7 @@ export async function generateStaticParams() {
 }
 
 export default async function BlogPage({params}: {params: {id: string}}) {
-    // Make sure params is awaited
-    const { id } = await params;
+    const { id } = params;
     const res = await fetch(`${BLOG_API_URL}/${id}`, {
         method: 'GET',
         headers: {'Content-Type': 'application/json',},
@@ -42,15 +41,7 @@ export default async function BlogPage({params}: {params: {id: string}}) {
 
     return (
         <div className="w-4/5 mx-auto text-center flex flex-col gap-y-2.5">
-            <div>
-                <h1 className="text-5xl font-sans">{blog.title}</h1>
-                <p className="text-gray-500"><i>Published on: {new Date(blog.created_at).toLocaleDateString()}</i></p>
-                {/* <p className="text-lg font-sans font-normal">{blog.content}</p> */}
-                <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: blog.content }} />
-                {/* <p><i>Author: {blog.author}</i></p> */}
-            </div>
-            <BlogControlButtons blog={blog} />
+            <RenderBlogAndOptionButtons blog={blog} />
         </div>
     );
 }
-
