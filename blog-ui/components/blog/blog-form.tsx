@@ -55,8 +55,8 @@ export default function BlogForm({
             <QuillEditor onChange={handleChange} value={content} />
             {/* Display Form Errors */}
             { userErrors?.length > 0 && (
-                userErrors?.map(error => (
-                    <p className="block text-red-400 text-lg">{error}</p>
+                userErrors?.map((error, index) => (
+                    <p key={index} className="block text-red-400 text-lg">{error}</p>
                 ))
             )}
             {/* Buttons */}
