@@ -9,8 +9,8 @@ export const getBlogById = (id: string) => apiHandler<Blog>(`${BLOG_API_URL}/${i
 
 export const createBlog = async (title: string, content: string, topics: Topic[]) => {
     const topic_ids: string[] = topics.map(topic => topic.id);
-    apiHandler<Blog>(
-    `${BLOG_API_URL}`, {
+
+    const response = await apiHandler<Blog>(`${BLOG_API_URL}`, {
         method: "POST",
         body: JSON.stringify({
             "title": title,
@@ -19,12 +19,13 @@ export const createBlog = async (title: string, content: string, topics: Topic[]
             "topic_ids": topic_ids
         })
     })
+    return response;    // Returning the newly created blog data
 }
 
 export const createBlogAsDraft = async (title: string, content: string, topics: Topic[]) => {
     const topic_ids: string[] = topics.map(topic => topic.id);
-    apiHandler<Blog>(
-    `${BLOG_API_URL}`, {
+
+    const response = await apiHandler<Blog>(`${BLOG_API_URL}`, {
         method: "POST",
         body: JSON.stringify({
             "title": title,
@@ -33,6 +34,7 @@ export const createBlogAsDraft = async (title: string, content: string, topics: 
             "topic_ids": topic_ids
         })
     })
+    return response;
 }
 
 export const updateBlog = (id: string, data: Partial<Blog>) => apiHandler<Blog>(
