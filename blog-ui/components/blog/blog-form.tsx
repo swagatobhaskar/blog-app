@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import dynamic from "next/dynamic"
-
+import DOMPurify from "isomorphic-dompurify"
 import ButtonCancel from "@/components/ui/buttons/button-cancel"
 import ButtonPrimary from "@/components/ui/buttons/button-primary"
 import ButtonSecondary from "@/components/ui/buttons/button-secondary"
@@ -65,8 +65,9 @@ export default function BlogForm({
                 <ButtonSecondary text="Save Draft" onClick={handleDraft} />
                 <ButtonPrimary text="Publish" onClick={handlePublish} />
             </div>
+            {/* New Button logic based on edit page */}
             <h2>Live Preview:</h2>
-            <div dangerouslySetInnerHTML={{ __html: content}} />
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content)}} />
         </div>
     )
 }
