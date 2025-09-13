@@ -23,7 +23,7 @@ export default function BlogControlButtons({blog}: {blog: Blog}) {
             }
         )
 
-        if (data) { // (success && data)
+        if (success && data) {
             router.refresh()
             // Success: proceed with next steps
             // do something if needed            
