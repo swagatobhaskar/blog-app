@@ -33,7 +33,7 @@ export default async function BlogPage({params}: {params: {id: string}}) {
     const res = await fetch(`${BLOG_API_URL}/${id}`, {
         method: 'GET',
         headers: {'Content-Type': 'application/json',},
-        cache: "force-cache", // better performance if data updates infrequently
+        cache: "default", // better performance if data updates infrequently
     });
     // Show 404 page if blog is not found
     if (!res.ok) return notFound();
