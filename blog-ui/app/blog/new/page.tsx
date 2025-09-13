@@ -7,6 +7,7 @@ import TopicSelection from "@/components/topic/topic-selection";
 import Topic from "@/lib/types/topic";
 import { createBlogAndPublish, createBlogAsDraft } from "@/lib/api/apiBlog";
 import HandleAction from "@/lib/handleAction";
+import { validateBlogInput } from "@/utils/validateFormFields";
 
 export default function NewBlogPage() {
     const router = useRouter()
@@ -15,19 +16,20 @@ export default function NewBlogPage() {
     const [ userErrors, setUserErrors ] = useState<string[]>([]);
     
     const handleSaveDraft = async (title: string, content: string) => {
-        if (!title.trim()) {
-            setUserErrors(prev => prev.includes("Title is required!") // prevents duplication
-                ? prev : [...prev, "Title is required!"]
-            )
-            return;
-        }
+        if (!validateBlogInput(title, content, setUserErrors)) return;
+        // if (!title.trim()) {
+        //     setUserErrors(prev => prev.includes("Title is required!") // prevents duplication
+        //         ? prev : [...prev, "Title is required!"]
+        //     )
+        //     return;
+        // }
     
-        if (!content.trim()) {
-            setUserErrors(prev => prev.includes("Content is required")
-                ? prev : [...prev, "Content is required!"]
-            )
-            return;
-        }
+        // if (!content.trim()) {
+        //     setUserErrors(prev => prev.includes("Content is required")
+        //         ? prev : [...prev, "Content is required!"]
+        //     )
+        //     return;
+        // }
         const { data, error, success } = await HandleAction(
             () => createBlogAsDraft(title, content, topicsToUse),
             {
@@ -43,19 +45,7 @@ export default function NewBlogPage() {
         title: string,
         content: string,
     ) => {
-        if (!title.trim()) {
-            setUserErrors(prev => prev.includes("Title is required!") // prevents duplication
-                ? prev : [...prev, "Title is required!"]
-            )
-            return;
-        }
-    
-        if (!content.trim()) {
-            setUserErrors(prev => prev.includes("Content is required")
-                ? prev : [...prev, "Content is required!"]
-            )
-            return;
-        }
+        if (!validateBlogInput(title, content, setUserErrors)) return;
 
         const { data, error, success } = await HandleAction(
             () => createBlogAndPublish(title, content, topicsToUse),

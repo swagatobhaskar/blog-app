@@ -3,11 +3,11 @@
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react' 
 import BlogForm from '@/components/blog/blog-form'
-import Blog from '@/lib/types/blog';
 import Topic from '@/lib/types/topic';
 import TopicSelection from '@/components/topic/topic-selection';
 import { getBlogById, updateBlogAndPublish, updateBlogAndSaveDraft } from '@/lib/api/apiBlog';
 import HandleAction from '@/lib/handleAction';
+import { validateBlogInput } from '@/utils/validateFormFields';
 
 export default function EditBlogPage() {
     const {id} = useParams<{id: string}>();
@@ -42,19 +42,8 @@ export default function EditBlogPage() {
     }, [id]);
 
     const handleEditAndSaveDraft = async (title: string, content: string) => {
-        if (!title.trim()) {
-            setUserErrors(prev => prev.includes("Title is required!") // prevents duplication
-                ? prev : [...prev, "Title is required!"]
-            )
-            return;
-        }
-    
-        if (!content.trim()) {
-            setUserErrors(prev => prev.includes("Content is required")
-                ? prev : [...prev, "Content is required!"]
-            )
-            return;
-        }
+        if (!validateBlogInput(title, content, setUserErrors)) return;
+        
         const { data, error, success } = await HandleAction(
             () => updateBlogAndSaveDraft(id, title, content, editedTopics), // !! not taking title, content, topics
             {
@@ -67,19 +56,7 @@ export default function EditBlogPage() {
     }
 
     const handleEditAndPublish = async (title: string, content: string) => {
-        if (!title.trim()) {
-            setUserErrors(prev => prev.includes("Title is required!") // prevents duplication
-                ? prev : [...prev, "Title is required!"]
-            )
-            return;
-        }
-    
-        if (!content.trim()) {
-            setUserErrors(prev => prev.includes("Content is required")
-                ? prev : [...prev, "Content is required!"]
-            )
-            return;
-        }
+        if (!validateBlogInput(title, content, setUserErrors)) return;
 
         const { data, error, success } = await HandleAction(
             () => updateBlogAndPublish(id, title, content, editedTopics),   // !! not taking title, content, topics
