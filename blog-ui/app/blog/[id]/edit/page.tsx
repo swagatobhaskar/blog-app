@@ -6,7 +6,7 @@ import BlogForm from '@/components/blog/blog-form'
 import Blog from '@/lib/types/blog';
 import Topic from '@/lib/types/topic';
 import TopicSelection from '@/components/topic/topic-selection';
-import { getBlogById, publishDraftedBlog, savePublishedBlogAsDraft } from '@/lib/api/apiBlog';
+import { getBlogById, updateBlogAndPublish, updateBlogAndSaveDraft } from '@/lib/api/apiBlog';
 import HandleAction from '@/lib/handleAction';
 
 export default function EditBlogPage() {
@@ -41,7 +41,7 @@ export default function EditBlogPage() {
         fetchBlog();
     }, [id]);
 
-    const handleSaveDraftFromPublish = async (title: string, content: string) => {
+    const handleEditAndSaveDraft = async (title: string, content: string) => {
         if (!title.trim()) {
             setUserErrors(prev => prev.includes("Title is required!") // prevents duplication
                 ? prev : [...prev, "Title is required!"]
@@ -56,17 +56,17 @@ export default function EditBlogPage() {
             return;
         }
         const { data, error, success } = await HandleAction(
-            () => savePublishedBlogAsDraft(id), // !! not taking title, content, topics
+            () => updateBlogAndSaveDraft(id, title, content, editedTopics), // !! not taking title, content, topics
             {
                 setLoading: setLoading,
-                successMessage: "Blog published from draft.",
-                errorMessage: "Could not publish blog.. please try again!"
+                successMessage: "Blog updated and saved as draft.",
+                errorMessage: "Could not edit or save as draft.. please try again!"
             }
         )
         if (success && data) {router.push(`/blog/draft/${data.id}`)}
     }
 
-    const handlePublishFromDraft = async (title: string, content: string) => {
+    const handleEditAndPublish = async (title: string, content: string) => {
         if (!title.trim()) {
             setUserErrors(prev => prev.includes("Title is required!") // prevents duplication
                 ? prev : [...prev, "Title is required!"]
@@ -82,7 +82,7 @@ export default function EditBlogPage() {
         }
 
         const { data, error, success } = await HandleAction(
-            () => publishDraftedBlog(id),   // !! not taking title, content, topics
+            () => updateBlogAndPublish(id, title, content, editedTopics),   // !! not taking title, content, topics
             {
                 setLoading: setLoading,
                 successMessage: "Blog published.",
@@ -92,11 +92,11 @@ export default function EditBlogPage() {
         if (success && data) {
             router.push(`/blog/${data.id}`)
         } else {
-            console.error("Blog creation failed:", error);
+            console.error("Blog Update or publish failed:", error);
         }
     }
 
-    const handleCancel = async () => {
+    const handleCancel = () => {
         // alert("Cancel Clicked!")
         setTitle('')
         setContent('')
@@ -114,11 +114,12 @@ export default function EditBlogPage() {
             />
             <div className='w-[80%] mx-auto'>
                 <BlogForm
+                    mode='edit'
                     initialTitle={title}
                     initialContent={content}
                     onCancel={handleCancel}
-                    onSaveDraft={handleSaveDraftFromPublish}
-                    onPublish={handlePublishFromDraft}
+                    onEditAndPublish={handleEditAndPublish}
+                    onEditAndSaveDraft={handleEditAndSaveDraft}
                     userErrors={userErrors.length > 0 ? userErrors : []}
                 />
             </div>
