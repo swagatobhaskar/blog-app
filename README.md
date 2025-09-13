@@ -24,7 +24,3 @@ npm install gray-matter remark remark-html, to parse .md and convert it to HTML.
 To Do Next: Rating/Reactions, RTE pic upload, pagination, contact form, beautify blog display, content sanitization on both backend and frontend.
 
 Install Isomorphic-Dompurify: `npm install isomorphic-dompurify`
-
-Issue> from `draft/[id]/page.tsx` when clicking on Publish, it's getting published but page stays the same!
-ADD **> New blog form Button logic based on edit page, new 'edit and publish', 'edit and save as draft' buttons.
-ADD> ZOD/validation for forms.
