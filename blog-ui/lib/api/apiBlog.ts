@@ -73,9 +73,7 @@ export const updateBlogAndPublish = async (id: string, title: string, content: s
     return response;
 }
 
-export const deleteBlog = (id: string) => {
-    apiHandler<{ success: boolean }>(`${BLOG_API_URL}/${id}`, {method: 'DELETE'})
-}
+export const deleteBlog = (id: string) => apiHandler<{ success: boolean }>(`${BLOG_API_URL}/${id}`, {method: 'DELETE'})
 
 export const getAllDraftBlogs = () => apiHandler<Blog[]>(`${BLOG_API_URL}/draft`)
 
