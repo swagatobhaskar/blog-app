@@ -11,30 +11,32 @@ import { Label } from "@/components/ui/label"
 
 export const QuillEditor = dynamic(() => import('@/components/quill/quillEditor'), {ssr: false})
 
-interface BlogFormProps {
+interface BaseProps {
     initialTitle?: string;
     initialContent?: string;
     userErrors: string[];
-    // !! BlogForm has nothing to do with Topics !!
-    onSaveDraft: (title: string, content: string) => void;
-    onPublish: (title: string, content: string) => void;
     onCancel: () => void;
 }
 
-export default function BlogForm({
-  initialTitle = '',
-  initialContent = '',
-  userErrors,
-  onSaveDraft,
-  onPublish,
-  onCancel,
-}: BlogFormProps) {
+type NewModeProps = BaseProps & {
+  mode: 'new';
+  onSaveDraft: (title: string, content: string) => void;
+  onPublish: (title: string, content: string) => void;
+};
+
+type EditModeProps = BaseProps & {
+  mode: 'edit';
+  onEditAndSaveDraft: (title: string, content: string) => void;
+  onEditAndPublish: (title: string, content: string) => void;
+};
+
+type BlogFormProps = NewModeProps | EditModeProps;
+
+export default function BlogForm(props: BlogFormProps) {
+    const { mode, initialTitle = '', initialContent = '', userErrors, onCancel }  = props;
+
     const [title, setTitle] = useState(initialTitle);
     const [content, setContent] = useState(initialContent);
-
-    const handleDraft = () => onSaveDraft(title, content);
-    const handlePublish = () => onPublish(title, content);
-    const handleCancel = () => onCancel();
 
     const handleChange = (html: string) => {
         setContent(html)        
@@ -60,12 +62,20 @@ export default function BlogForm({
                 ))
             )}
             {/* Buttons */}
-            <div className="flex flex-row gap-4 justify-center lg:justify-end mt-2">
-                <ButtonCancel text="Cancel" onClick={handleCancel} />
-                <ButtonSecondary text="Save Draft" onClick={handleDraft} />
-                <ButtonPrimary text="Publish" onClick={handlePublish} />
-            </div>
-            {/* New Button logic based on edit page */}
+            { mode === 'new' ? (
+                <div className="flex flex-row gap-4 justify-center lg:justify-end mt-2">
+                    <ButtonCancel text="Cancel" onClick={onCancel} />
+                    <ButtonSecondary text="Save Draft" onClick={() => props.onSaveDraft(title, content)} />
+                    <ButtonPrimary text="Publish" onClick={() => props.onPublish(title, content)} />
+                </div>
+                ) : (
+                <div className="flex flex-row gap-4 justify-center lg:justify-end mt-2">
+                    <ButtonCancel text="Cancel" onClick={onCancel} />
+                    <ButtonSecondary text="Edit and Save Draft" onClick={() => props.onEditAndSaveDraft(title, content)} />
+                    <ButtonPrimary text="Edit and Publish" onClick={() => props.onEditAndPublish(title, content)} />
+                </div>
+            )}
+            {/* Preview */}
             <h2>Live Preview:</h2>
             <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content)}} />
         </div>
