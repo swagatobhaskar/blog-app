@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import BlogForm from "@/components/blog/blog-form";
 import TopicSelection from "@/components/topic/topic-selection";
 import Topic from "@/lib/types/topic";
-import { createBlog, createBlogAsDraft } from "@/lib/api/apiBlog";
+import { createBlogAndPublish, createBlogAsDraft } from "@/lib/api/apiBlog";
 import HandleAction from "@/lib/handleAction";
 
 export default function NewBlogPage() {
@@ -58,7 +58,7 @@ export default function NewBlogPage() {
         }
 
         const { data, error, success } = await HandleAction(
-            () => createBlog(title, content, topicsToUse),
+            () => createBlogAndPublish(title, content, topicsToUse),
             {
                 setLoading: setIsSubmitting,
                 successMessage: "Blog published.",
@@ -87,6 +87,7 @@ export default function NewBlogPage() {
             <div className="w-full lg:w-5/6">
                 { isSubmitting && <p>Saving...</p> }
                 <BlogForm
+                    mode="new"
                     onPublish={handlePublish}
                     onSaveDraft={handleSaveDraft}
                     onCancel={handleCancel}
