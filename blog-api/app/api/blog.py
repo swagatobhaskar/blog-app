@@ -7,6 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 import uuid
 import logging
 
+from app.utils.rte_sanitize import sanitize
 from app.dependencies import get_db
 from app.database.session import AsyncSession
 from app.database.models import User, Blog, Topic
@@ -100,9 +101,11 @@ async def create_new_blog(new_blog_data: blog_schema.BlogCreate, session: AsyncS
         # logger = logging.getLogger(__name__)
         # logger.info(f"Selected topics: {selected_topics}")
     
+    sanitized_blog_content: str = sanitize(new_blog_data.content)
+    
     new_blog = Blog(
         title = new_blog_data.title,
-        content = new_blog_data.content,
+        content = sanitized_blog_content, # new_blog_data.content,
         is_draft = new_blog_data.is_draft,
         author_id = temp_user.id,
         topics = selected_topics
@@ -151,7 +154,8 @@ async def update_blog(blog_id: uuid.UUID, updated_blog_data: blog_schema.BlogUpd
     if updated_blog_data.title:
         requested_blog.title = updated_blog_data.title
     if updated_blog_data.content:
-        requested_blog.content = updated_blog_data.content
+        sanitized_blog_content: str = sanitize(updated_blog_data.content)
+        requested_blog.content = sanitized_blog_content
     if updated_blog_data.is_draft is not None: # Use is not None to allow both True and False to go through
         requested_blog.is_draft = updated_blog_data.is_draft
         
