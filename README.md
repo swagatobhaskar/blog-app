@@ -24,3 +24,5 @@ npm install gray-matter remark remark-html, to parse .md and convert it to HTML.
 To Do Next: Rating/Reactions, RTE pic upload, pagination, contact form, beautify blog display, content sanitization on both backend and frontend.
 
 Install Isomorphic-Dompurify: `npm install isomorphic-dompurify`
+
+On FastAPI, for sanitization- `pip install nh3`
