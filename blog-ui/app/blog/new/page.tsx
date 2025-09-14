@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import DOMPurify from "isomorphic-dompurify"
 import BlogForm from "@/components/blog/blog-form";
 import TopicSelection from "@/components/topic/topic-selection";
 import Topic from "@/lib/types/topic";
@@ -30,8 +31,10 @@ export default function NewBlogPage() {
         //     )
         //     return;
         // }
+        const sanitized_content = DOMPurify.sanitize(content);
+
         const { data, error, success } = await HandleAction(
-            () => createBlogAsDraft(title, content, topicsToUse),
+            () => createBlogAsDraft(title, sanitized_content, topicsToUse),
             {
                 setLoading: setIsSubmitting,
                 successMessage: "Blog published from draft.",
@@ -46,9 +49,10 @@ export default function NewBlogPage() {
         content: string,
     ) => {
         if (!validateBlogInput(title, content, setUserErrors)) return;
-
+        const sanitized_content = DOMPurify.sanitize(content);
+        
         const { data, error, success } = await HandleAction(
-            () => createBlogAndPublish(title, content, topicsToUse),
+            () => createBlogAndPublish(title, sanitized_content, topicsToUse),
             {
                 setLoading: setIsSubmitting,
                 successMessage: "Blog published.",

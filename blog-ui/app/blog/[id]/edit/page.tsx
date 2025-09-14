@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react' 
+import DOMPurify from 'isomorphic-dompurify'
 import BlogForm from '@/components/blog/blog-form'
 import Topic from '@/lib/types/topic';
 import TopicSelection from '@/components/topic/topic-selection';
@@ -43,9 +44,10 @@ export default function EditBlogPage() {
 
     const handleEditAndSaveDraft = async (title: string, content: string) => {
         if (!validateBlogInput(title, content, setUserErrors)) return;
-        
+        const sanitized_content = DOMPurify.sanitize(content);
+
         const { data, error, success } = await HandleAction(
-            () => updateBlogAndSaveDraft(id, title, content, editedTopics), // !! not taking title, content, topics
+            () => updateBlogAndSaveDraft(id, title, sanitized_content, editedTopics), // !! not taking title, content, topics
             {
                 setLoading: setLoading,
                 successMessage: "Blog updated and saved as draft.",
@@ -57,9 +59,10 @@ export default function EditBlogPage() {
 
     const handleEditAndPublish = async (title: string, content: string) => {
         if (!validateBlogInput(title, content, setUserErrors)) return;
-
+        const sanitized_content = DOMPurify.sanitize(content);
+        
         const { data, error, success } = await HandleAction(
-            () => updateBlogAndPublish(id, title, content, editedTopics),   // !! not taking title, content, topics
+            () => updateBlogAndPublish(id, title, sanitized_content, editedTopics),   // !! not taking title, content, topics
             {
                 setLoading: setLoading,
                 successMessage: "Blog published.",
