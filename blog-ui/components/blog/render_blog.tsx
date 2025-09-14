@@ -15,7 +15,7 @@ export default function RenderBlogAndOptionButtons({blog}: {blog: Blog}) {
                 <p className="text-gray-500"><i>Published on: {new Date(blog.created_at).toLocaleDateString()}</i></p>
                 {/* <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: draftBlog.content }} /> */}
                 <div className="flex justify-center px-4">
-                    <div className="prose prose-lg dark:prose-invert max-w-3xl">
+                    <div className="prose prose-lg dark:prose-invert max-w-3xl text-left">
                         <div dangerouslySetInnerHTML={{ __html: safeHTMLContent }} />
                     </div>
                 </div>
