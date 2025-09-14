@@ -7,6 +7,16 @@ allowed_origins_list: List[str] = [
     "http://localhost:3000",
     "http://127.0.0.1:3000"
     ]
+
+NH3_ALLOWED_TAGS = {
+    "p", "b", "i", "u", "em", "strong", "a", "ul", "ol", "li", "br",
+    "blockquote", "code", "pre", "h1", "h2", "h3"
+}
+
+NH3_ALLOWED_ATTRS = {
+    "a": {"href", "title", "target", "rel"}
+}
+
 class Settings(BaseSettings):
     app_name: str = "personal blog api"
     env: str = "development"
@@ -17,6 +27,8 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int
     refresh_token_expire_days: int
     allowed_origins: List[str] = allowed_origins_list
+    allowed_tags = NH3_ALLOWED_TAGS
+    allowed_attrs = NH3_ALLOWED_ATTRS
     
     model_config = SettingsConfigDict(
         env_file = ".env",
