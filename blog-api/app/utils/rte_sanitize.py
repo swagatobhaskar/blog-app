@@ -8,6 +8,6 @@ def sanitize(blog_content: str):
         blog_content,
         tags=settings.allowed_tags,
         attributes=settings.allowed_attrs,
-        strip=True,
+        strip_comments=True,
     )
     return clean_rte_content

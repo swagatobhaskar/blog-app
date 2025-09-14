@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, ClassVar
 from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
@@ -14,7 +14,7 @@ NH3_ALLOWED_TAGS = {
 }
 
 NH3_ALLOWED_ATTRS = {
-    "a": {"href", "title", "target", "rel"}
+    "a": {"href", "title", "target",} # "rel"}
 }
 
 class Settings(BaseSettings):
@@ -27,8 +27,8 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int
     refresh_token_expire_days: int
     allowed_origins: List[str] = allowed_origins_list
-    allowed_tags = NH3_ALLOWED_TAGS
-    allowed_attrs = NH3_ALLOWED_ATTRS
+    allowed_tags: ClassVar[set[str]] = NH3_ALLOWED_TAGS
+    allowed_attrs: ClassVar[dict[str, set[str]]] = NH3_ALLOWED_ATTRS
     
     model_config = SettingsConfigDict(
         env_file = ".env",
@@ -39,4 +39,4 @@ class Settings(BaseSettings):
 # The use of @lru_cache() avoids reloading settings every time they are accessed.
 @lru_cache()
 def get_settings() -> Settings:
-    return Settings()
+    return Settings() # type: ignore  ## type: ignore to suppress warning
