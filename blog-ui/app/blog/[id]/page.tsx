@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation"
 import Blog from "@/lib/types/blog"
 import {BLOG_API_URL} from "@/lib/constants/constants"
-import RenderBlogAndOptionButtons from "@/components/blog/render_blog";
+import RenderBlogAndOptionButtons from "@/components/blog/renderBlog";
 
 export async function generateStaticParams() {
     try {

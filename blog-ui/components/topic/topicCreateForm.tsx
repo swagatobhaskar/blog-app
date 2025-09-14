@@ -3,8 +3,8 @@
 import { useState } from "react"
 
 import { TOPICS_API_URL } from "@/lib/constants/constants"
-import ButtonPrimary from "../ui/buttons/button-primary"
-import ButtonSecondary from "../ui/buttons/button-secondary"
+import ButtonPrimary from "../ui/buttons/buttonPrimary"
+import ButtonSecondary from "../ui/buttons/buttonSecondary"
 import { Input } from "../ui/input"
 import { Textarea } from "../ui/textarea"
 import { Label } from "../ui/label"

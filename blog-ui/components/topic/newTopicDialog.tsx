@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from "react"
-import TopicCreateForm from "./topic-create-form"
+import TopicCreateForm from "./topicCreateForm"
 import { Button } from "../ui/button"
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "../ui/dialog"
-import ButtonPrimary from "../ui/buttons/button-primary"
+import ButtonPrimary from "../ui/buttons/buttonPrimary"
 
 export default function NewTopicCreateDialog() {
     const [open, setOpen] = useState(false)

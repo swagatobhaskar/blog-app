@@ -3,9 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Blog from "@/lib/types/blog";
-import ButtonCancel from "@/components/ui/buttons/button-cancel";
-import ButtonSecondary from "@/components/ui/buttons/button-secondary";
-import ButtonPrimary from "@/components/ui/buttons/button-primary";
+import ButtonCancel from "@/components/ui/buttons/buttonCancel";
+import ButtonSecondary from "@/components/ui/buttons/buttonSecondary";
+import ButtonPrimary from "@/components/ui/buttons/buttonPrimary";
 import HandleAction from "@/lib/handleAction";
 import { publishDraftedBlog, savePublishedBlogAsDraft, deleteBlog } from "@/lib/api/apiBlog";
 

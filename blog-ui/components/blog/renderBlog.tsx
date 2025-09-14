@@ -2,8 +2,8 @@
 
 import DOMPurify from "isomorphic-dompurify"
 import Blog from "@/lib/types/blog"
-import TopicList from "../topic/topic-list"
-import BlogControlButtons from "./blog-control-btns"
+import TopicList from "../topic/topicList"
+import BlogControlButtons from "./blogControlBtns"
 
 export default function RenderBlogAndOptionButtons({blog}: {blog: Blog}) {
     const safeHTMLContent = DOMPurify.sanitize(blog.content);

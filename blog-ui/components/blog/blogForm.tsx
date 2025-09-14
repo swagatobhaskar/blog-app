@@ -3,9 +3,9 @@
 import { useState } from "react"
 import dynamic from "next/dynamic"
 import DOMPurify from "isomorphic-dompurify"
-import ButtonCancel from "@/components/ui/buttons/button-cancel"
-import ButtonPrimary from "@/components/ui/buttons/button-primary"
-import ButtonSecondary from "@/components/ui/buttons/button-secondary"
+import ButtonCancel from "@/components/ui/buttons/buttonCancel"
+import ButtonPrimary from "@/components/ui/buttons/buttonPrimary"
+import ButtonSecondary from "@/components/ui/buttons/buttonSecondary"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 

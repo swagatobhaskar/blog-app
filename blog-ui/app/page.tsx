@@ -1,7 +1,7 @@
 import Blog from "@/lib/types/blog"
 
 import { BLOG_API_URL } from "@/lib/constants/constants"
-import BlogListItem from "@/components/blog/blog_list_item"
+import BlogListItem from "@/components/blog/blogListItem"
 
 export default async function Home() {
   const res = await fetch(

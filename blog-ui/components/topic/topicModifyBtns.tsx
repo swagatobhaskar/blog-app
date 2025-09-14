@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from "react";
-import ButtonDelete from "../ui/buttons/button-delete-icon";
-import ButtonEdit from "../ui/buttons/button-edit-icon";
+import ButtonDelete from "../ui/buttons/buttonDeleteIcon";
+import ButtonEdit from "../ui/buttons/buttonEditIcon";
 import {
     Dialog,
     DialogContent,
@@ -27,9 +27,9 @@ export default function TopicModifyButtons({topic}: {topic: Topic}) {
         alert("In savehandler")
     }
 
-    const handleTopicDelete = (topic.id) => {
+    const handleTopicDelete = (topic: Topic) => {
         alert("In DeleteHandler")
-        apiTopic.DeleteTopic(topic.id)
+        apiTopic.deleteTopic(topic.id)
     }
 
     return (
@@ -68,7 +68,7 @@ export default function TopicModifyButtons({topic}: {topic: Topic}) {
                     </DialogHeader>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setDeleteOpen(false)}>Cancel</Button>
-                        <Button variant="destructive" onClick={() => handleTopicDelete(topic.id)}>Delete</Button>
+                        <Button variant="destructive" onClick={() => handleTopicDelete(topic)}>Delete</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

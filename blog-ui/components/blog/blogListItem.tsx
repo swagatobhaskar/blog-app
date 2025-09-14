@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Blog from "@/lib/types/blog"
-import BlogControlButtons from "./blog-control-btns";
-import TopicList from "../topic/topic-list";
+import BlogControlButtons from "./blogControlBtns";
+import TopicList from "../topic/topicList";
 
 export default function BlogListItem({blog}: {blog: Blog}) {
     return (

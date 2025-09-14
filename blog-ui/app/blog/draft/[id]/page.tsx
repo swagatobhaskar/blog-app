@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation";
 import { BLOG_API_URL } from "@/lib/constants/constants";
 import Blog from "@/lib/types/blog";
-import RenderBlogAndOptionButtons from "@/components/blog/render_blog";
+import RenderBlogAndOptionButtons from "@/components/blog/renderBlog";
 
 export default async function DraftBlogItem({params}: {params: {id: string}}) {
     const { id } = params;

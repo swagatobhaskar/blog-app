@@ -3,9 +3,9 @@
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react' 
 import DOMPurify from 'isomorphic-dompurify'
-import BlogForm from '@/components/blog/blog-form'
+import BlogForm from '@/components/blog/blogForm'
 import Topic from '@/lib/types/topic';
-import TopicSelection from '@/components/topic/topic-selection';
+import TopicSelection from '@/components/topic/topicSelection';
 import { getBlogById, updateBlogAndPublish, updateBlogAndSaveDraft } from '@/lib/api/apiBlog';
 import HandleAction from '@/lib/handleAction';
 import { validateBlogInput } from '@/utils/validateFormFields';

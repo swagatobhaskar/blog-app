@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import DOMPurify from "isomorphic-dompurify"
-import BlogForm from "@/components/blog/blog-form";
-import TopicSelection from "@/components/topic/topic-selection";
+import BlogForm from "@/components/blog/blogForm";
+import TopicSelection from "@/components/topic/topicSelection";
 import Topic from "@/lib/types/topic";
 import { createBlogAndPublish, createBlogAsDraft } from "@/lib/api/apiBlog";
 import HandleAction from "@/lib/handleAction";
