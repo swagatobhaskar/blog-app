@@ -1,3 +1,6 @@
+// 'use client'
+
+// import { useState } from 'react'
 import { Button } from "../ui/button";
 
 type AuthToggleProps = {
@@ -6,6 +9,9 @@ type AuthToggleProps = {
 }
 
 export default async function AuthToggle({ mode, setMode }: AuthToggleProps) {
+
+    // const [ mode, setMode ] = useState< 'login' | 'signup' | '' >()
+
     return (
         <div className="text-sm text-center mt-4">
             {mode === 'login' ? (

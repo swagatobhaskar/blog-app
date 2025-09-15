@@ -1,5 +1,6 @@
 import Link from "next/link"
 import Nav from "./nav"
+import AuthHeader from "../auth/authHeader"
 
 export default function Header() {
     return (
@@ -8,6 +9,7 @@ export default function Header() {
         >
             <Link href={'/'} className="font-sans font-light text-xl sm:text-2xl">Swagato's Blogs</Link>
             <Nav />
+            <AuthHeader />
         </header>
     )
 }

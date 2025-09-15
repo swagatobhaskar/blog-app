@@ -1,3 +1,7 @@
+Sample users:
+    john@example.com, hdfhSFD^&f2834sad39
+    bob@example.com, hdfhSFD^&f28346
+
 # FastAPI Backend Setup (Ubuntu 24)
 1. Create virtual environment: `python3 -m venv env`
 2. Activate the virtual env: `source env/bin/activate`
