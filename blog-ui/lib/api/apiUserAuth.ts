@@ -5,6 +5,7 @@ import { AUTH_LOGIN_API_URL, AUTH_SIGNUP_API_URL, AUTH_LOGOUT_API_URL, USER_API_
 export const signUpNewUser = (email: string, password: string) => apiHandler(
     // Where to check password matching?
     `${AUTH_SIGNUP_API_URL}`, {
+        auth: false,
         method: 'POST',
         body: JSON.stringify({
             "email": email,
@@ -14,6 +15,7 @@ export const signUpNewUser = (email: string, password: string) => apiHandler(
 
 export const loginUser = (email: string, password: string) => apiHandler(
     `${AUTH_LOGIN_API_URL}`, {
+        auth: false,
         method: 'POST',
         body: JSON.stringify({
             "email": email,
@@ -51,6 +53,7 @@ export const updateUserData = async (data: UpdateUserData) => {
     }
 
     const response = await apiHandler(`${USER_API_URL}`, {
+        auth: true,
         method: 'PATCH',
         body: JSON.stringify(body)
     })

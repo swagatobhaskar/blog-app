@@ -3,15 +3,16 @@ import { BLOG_API_URL } from "../constants/constants";
 import { apiHandler } from "./apiFetchHandler";
 import Topic from "../types/topic";
 
-export const getAllBlogs = () => apiHandler<Blog[]>(`${BLOG_API_URL}`)
+export const getAllBlogs = () => apiHandler<Blog[]>(`${BLOG_API_URL}`, { method: 'GET', auth: false })
 
-export const getBlogById = (id: string) => apiHandler<Blog>(`${BLOG_API_URL}/${id}`)
+export const getBlogById = (id: string) => apiHandler<Blog>(`${BLOG_API_URL}/${id}`, { method: 'GET', auth: false })
 
 export const createBlogAndPublish = async (title: string, content: string, topics: Topic[]) => {
     const topic_ids: string[] = topics.map(topic => topic.id);
 
     const response = await apiHandler<Blog>(`${BLOG_API_URL}`, {
         method: "POST",
+        auth: true, // default is true
         body: JSON.stringify({
             "title": title,
             "content": content,

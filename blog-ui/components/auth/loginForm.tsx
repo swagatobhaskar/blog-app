@@ -42,6 +42,7 @@ export default function LoginForm() {
         )
         if (success && data) {
             setLoading(false)
+            console.log("DATA:",data)
             router.push('/')
         }
         if (!success || error) {

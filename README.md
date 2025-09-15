@@ -1,6 +1,7 @@
 Sample users:
     john@example.com, hdfhSFD^&f2834sad39
     bob@example.com, hdfhSFD^&f28346
+    alice@example.com, 123BCAsagcAv46q#%4GHhs$As3
 
 # FastAPI Backend Setup (Ubuntu 24)
 1. Create virtual environment: `python3 -m venv env`
@@ -25,7 +26,7 @@ npm install gray-matter remark remark-html, to parse .md and convert it to HTML.
 > Installed Quill rich text editor: $ npm install quill@2.0.3
 > Installed uuid with: $ npm install uuid
 
-To Do Next: Rating/Reactions, RTE pic upload, pagination, contact form, beautify blog display, place blog control buttons on the top right beside title.
+To Do Next: Rating/Reactions, RTE pic upload, pagination, contact form, beautify blog display, place blog control buttons on the top right beside title. Add password hasing function in backend cli_seed and dev_seed.
 
 Install Isomorphic-Dompurify: `npm install isomorphic-dompurify`
 

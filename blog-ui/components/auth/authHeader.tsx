@@ -13,6 +13,7 @@ export default function AuthHeader() {
 
     useEffect(() => {
         const fetchUser = async () => {
+            console.log("USE EFFECT....")
             const { data, success, error } = await HandleAction(
                 () => getCurrentUser(),
                 {
@@ -35,6 +36,7 @@ export default function AuthHeader() {
     const handleLogout = () => {}
     
     if (user) {
+        console.log("User ", user)
         return (
             <div className="flex items-center gap-4">
                 <span>Hello, {user.id}</span>
