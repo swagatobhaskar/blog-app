@@ -21,8 +21,10 @@ npm install gray-matter remark remark-html, to parse .md and convert it to HTML.
 > Installed Quill rich text editor: $ npm install quill@2.0.3
 > Installed uuid with: $ npm install uuid
 
-To Do Next: Rating/Reactions, RTE pic upload, pagination, contact form, beautify blog display, content sanitization on both backend and frontend.
+To Do Next: Rating/Reactions, RTE pic upload, pagination, contact form, beautify blog display, place blog control buttons on the top right beside title.
 
 Install Isomorphic-Dompurify: `npm install isomorphic-dompurify`
 
 On FastAPI, for sanitization- `pip install nh3`
+
+install react-hook-form, zodresolver, zod: `npm install react-hook-form`, `npm install @hookform/resolvers`, `npm install zod`.
