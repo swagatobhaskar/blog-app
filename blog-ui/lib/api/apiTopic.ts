@@ -2,9 +2,9 @@ import Topic from "../types/topic"
 import { TOPICS_API_URL } from "../constants/constants";
 import { apiHandler } from "./apiFetchHandler";
 
-export const getAllTopics = () => apiHandler<Topic[]>(`${TOPICS_API_URL}`, { method: 'GET', auth: false })
+export const getAllTopics = () => apiHandler<Topic[]>(`${TOPICS_API_URL}`, { method: 'GET' })
 
-export const getTopicById = (id: string) => apiHandler<Topic>(`${TOPICS_API_URL}/${id}`, { method: 'GET', auth: false })
+export const getTopicById = (id: string) => apiHandler<Topic>(`${TOPICS_API_URL}/${id}`, { method: 'GET' })
 
 export const createTopic = ({name, description}: Omit<Topic, 'id'>) => apiHandler<Topic>(
     `${TOPICS_API_URL}`, {
