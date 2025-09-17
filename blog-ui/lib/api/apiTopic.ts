@@ -8,14 +8,12 @@ export const getTopicById = (id: string) => apiHandler<Topic>(`${TOPICS_API_URL}
 
 export const createTopic = ({name, description}: Omit<Topic, 'id'>) => apiHandler<Topic>(
     `${TOPICS_API_URL}`, {
-        auth: false,
         method: "POST",
         body: JSON.stringify({name, description})
     })
 
 export const updateTopic = (id: string, data: Partial<Topic>) => apiHandler<Topic>(
     `${TOPICS_API_URL}/${id}`, {
-        auth: false,
         method: 'PATCH',
         body: JSON.stringify(data)
     })
@@ -23,6 +21,5 @@ export const updateTopic = (id: string, data: Partial<Topic>) => apiHandler<Topi
 export const deleteTopic = (id: string) =>
     apiHandler<{ success: boolean }>(
         `${TOPICS_API_URL}/${id}`, {
-            auth: false,
             method: 'DELETE'
     })
