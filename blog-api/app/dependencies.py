@@ -32,8 +32,10 @@ async def get_current_user(token: str = Depends(get_token_from_cookie), session:
     try:
         payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
         user_id: str | None = payload.get("sub")    # payload.get() can potentially return None
+        
         if user_id is None:
             raise HTTPException(status_code=401, detail="Invalid token payload")
+    
     except JWTError:
         raise HTTPException(status_code=401, detail="Token is invalid or expired")
     

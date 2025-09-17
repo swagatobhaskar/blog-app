@@ -8,7 +8,7 @@ import uuid
 import logging
 
 from app.utils.rte_sanitize import sanitize
-from app.dependencies import get_db
+from app.dependencies import get_current_user, get_db
 from app.database.session import AsyncSession
 from app.database.models import User, Blog, Topic
 from app.schema import blog_schema
@@ -40,12 +40,14 @@ async def get_all_blogs(session: AsyncSession = Depends(get_db)):
         )
 
 @router.get('/draft', response_model=List[blog_schema.BlogOut], status_code=status.HTTP_200_OK)
-async def get_all_draft_blogs(session: AsyncSession = Depends(get_db)):
+async def get_all_draft_blogs(session: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)):
     try:
-        print("IN TRY")
         results = await session.execute(
             select(Blog)
-            .where(Blog.is_draft.is_(True))
+            .where(
+                Blog.is_draft.is_(True),
+                Blog.author_id == current_user.id
+            )
             .options(joinedload(Blog.author))   # Use joinedload if you always want author with Blog
         )
         return results.scalars().all()
@@ -77,12 +79,12 @@ async def get_blog_by_id(blog_id: uuid.UUID, session: AsyncSession = Depends(get
 
 
 @router.post('/', response_model=blog_schema.BlogOut, status_code=status.HTTP_201_CREATED)
-async def create_new_blog(new_blog_data: blog_schema.BlogCreate, session: AsyncSession = Depends(get_db)):
-    temp_user_result = await session.execute(
-        select(User).limit(1)   # .order_by(User.id)
-    )
-    temp_user = temp_user_result.scalars().first()
-    
+async def create_new_blog(
+    new_blog_data: blog_schema.BlogCreate,
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+    ):
+ 
     selected_topics = []
     
     if new_blog_data.topic_ids:
@@ -107,7 +109,7 @@ async def create_new_blog(new_blog_data: blog_schema.BlogCreate, session: AsyncS
         title = new_blog_data.title,
         content = sanitized_blog_content, # new_blog_data.content,
         is_draft = new_blog_data.is_draft,
-        author_id = temp_user.id,
+        author_id = current_user.id,
         topics = selected_topics
     )
     session.add(new_blog)
@@ -134,12 +136,17 @@ async def create_new_blog(new_blog_data: blog_schema.BlogCreate, session: AsyncS
         
         
 @router.patch('/{blog_id}', response_model=blog_schema.BlogOut, status_code=status.HTTP_200_OK)
-async def update_blog(blog_id: uuid.UUID, updated_blog_data: blog_schema.BlogUpdate, session: AsyncSession = Depends(get_db)):
+async def update_blog(
+    blog_id: uuid.UUID,
+    updated_blog_data: blog_schema.BlogUpdate,
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+    ):
 
     requested_blog_result = await session.execute(
         select(Blog)
         .options(selectinload(Blog.author))  # Eager load the author
-        .where(Blog.id == blog_id)
+        .where(Blog.id == blog_id, Blog.author_id == current_user.id)
     )
     
     requested_blog = requested_blog_result.scalar_one_or_none() # result.scalars().first() ?
@@ -147,7 +154,7 @@ async def update_blog(blog_id: uuid.UUID, updated_blog_data: blog_schema.BlogUpd
     if not requested_blog:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Blog with this id not found!"
+            detail="Blog not found or method not allowed!"
         )
     
     # Update the blog attributes if provided
@@ -171,6 +178,11 @@ async def update_blog(blog_id: uuid.UUID, updated_blog_data: blog_schema.BlogUpd
                 status_code=status.HTTP_404_NOT_FOUND, detail="Some topics not found")
         
         requested_blog.topics = list(updated_topics)   # Replace existing associations
+        
+    # To make the update more dynamic and DRY (don’t repeat yourself), you could loop over the fields to update:
+    # update_data = updated_blog_data.model_dump(exclude_unset=True)
+    # for field, value in update_data.items():
+    #     setattr(requested_blog, field, value)
     
     try:
         await session.commit()
@@ -197,15 +209,26 @@ async def update_blog(blog_id: uuid.UUID, updated_blog_data: blog_schema.BlogUpd
         )
 
 @router.delete('/{blog_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_blog(blog_id: uuid.UUID, session: AsyncSession = Depends(get_db)):
+async def delete_blog(
+    blog_id: uuid.UUID,
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+    ):
     requested_blog_result = await session.execute(
-        select(Blog).where(Blog.id == blog_id)
+        select(Blog)
+        .where(
+            Blog.id == blog_id,
+            Blog.author_id == current_user.id
+        )
     )
     
     requested_blog = requested_blog_result.scalar_one_or_none()
     # print("requested_blog::", requested_blog)
     if not requested_blog:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Blog with this id not found!")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Blog not found or you are not authorized to delete it!"
+        )
     
     try:
         await session.delete(requested_blog)
@@ -218,12 +241,20 @@ async def delete_blog(blog_id: uuid.UUID, session: AsyncSession = Depends(get_db
         )
                 
 @router.get('/draft/{blog_id}', response_model=blog_schema.BlogOut, status_code=status.HTTP_200_OK)
-async def get_draft_blog_by_id(blog_id: uuid.UUID, session: AsyncSession = Depends(get_db)):
+async def get_draft_blog_by_id(
+    blog_id: uuid.UUID,
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+    ):
     try:
         stmt = (
             select(Blog)
             # To be extra explicit over `Blog.is_draft == True`
-            .where(Blog.id == blog_id, Blog.is_draft.is_(True))
+            .where(
+                Blog.id == blog_id,
+                Blog.is_draft.is_(True),
+                Blog.author_id == current_user.id    
+            )
             .options(selectinload(Blog.author))
         )
         result = await session.execute(stmt)
