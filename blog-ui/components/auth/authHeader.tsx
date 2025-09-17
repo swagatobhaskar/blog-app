@@ -1,41 +1,67 @@
 'use client'
 
 import { useState, useEffect } from "react"
-import { getCurrentUser } from '@/lib/api/apiUserAuth'
+import { getCurrentUser, logoutUser } from '@/lib/api/apiUserAuth'
 import HandleAction from "@/lib/handleAction"
 import User from "@/lib/types/user"
 import Link from "next/link"
 import { Button } from "../ui/button"
+import { useRouter } from "next/navigation"
 
-export default function AuthHeader() {
+type HeaderProps = {
+  token?: string;
+};
+
+export default function AuthHeader({token}: HeaderProps) {
+    const router = useRouter()
     const [ loading, setLoading ] = useState<boolean>(false)
     const [ user, setUser ] = useState< User | null >(null)
+    // console.log("AuthHeader: ", token)
+    if (token) {
+        console.log("AuthHeader: ", token)
+    } else {
+        console.log("NO TOKEN")
+    }
+    // useEffect(() => {
+    //     const fetchUser = async () => {
+    //         console.log("USE EFFECT....")
+    //         const { data, success, error } = await HandleAction(
+    //             () => getCurrentUser(),
+    //             {
+    //                 setLoading: setLoading,
+    //                 successMessage: 'user found',
+    //                 errorMessage: 'Failed to load User'
+    //             }
+    //         )
+    //         if ( success && data ) {
+    //             setUser(data)
+    //         }
+    //         if (error) {
+    //             setUser(null)
+    //             console.error("Error fetching currentuser data")
+    //         }
+    //         setLoading(false)
+    //     }
+    //     fetchUser()
+    // }, [])
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            console.log("USE EFFECT....")
-            const { data, success, error } = await HandleAction(
-                () => getCurrentUser(),
-                {
-                    setLoading: setLoading,
-                    successMessage: 'user found',
-                    errorMessage: 'Failed to load User'
-                }
-            )
-            if ( success && data ) {
-                setUser(data)
+    const handleLogout = async () => {
+        const { success, error } = await HandleAction(
+            () => logoutUser(),
+            {
+                setLoading: setLoading,
+                successMessage: 'Logout Successful',
+                errorMessage: 'Logout Failed!'
             }
-            if (error) {
-                setUser(null)
-                console.error("Error fetching currentuser data")
-            }
-            setLoading(false)
+        )
+        if ( success ) {
+            setUser(null)
+            router.refresh()
         }
-        fetchUser()
-    }, [])
-
-    const handleLogout = () => {
-        setUser(null)
+        if (error) {
+            console.error("Error logging out!")
+        }
+        setLoading(false)
     }
 
     if (loading) {
@@ -47,16 +73,16 @@ export default function AuthHeader() {
         )
     }
     
-    if (user) {
+    if (token) {
         console.log("User ", user)
         return (
             <div className="flex items-center gap-4">
-                <span>Hello, {user.id}</span>
+                <span>Hello</span>
                 <Link href="/">
                     <Button variant="secondary">Home</Button>
                 </Link>
-                <Button onClick={() => handleLogout} variant="ghost">
-                    Logout
+                <Button onClick={handleLogout} variant="ghost">
+                    { loading ? '...' : 'Logout'} 
                 </Button>
             </div>
         )
