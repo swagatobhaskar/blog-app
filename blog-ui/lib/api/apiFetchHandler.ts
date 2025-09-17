@@ -1,28 +1,15 @@
 import { getCookie } from '@/utils/cookies'
 import { AUTH_REFRESH_TOKEN_API_URL } from '../constants/constants';
 
-async function fetchWithAuth(endpoint: string, options: RequestInit): Promise<Response> {
+async function apiFetch(endpoint: string, options: RequestInit): Promise<Response> {
     const csrfToken = getCookie('csrf_token');
 
     const config: RequestInit = {
         ...options,
-        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             ...options.headers,
             ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
-        },
-    };
-
-    return fetch(endpoint, config);
-}
-
-async function fetchWithoutAuth(endpoint: string, options: RequestInit): Promise<Response> {
-    const config: RequestInit = {
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers,
         },
     };
 
@@ -58,22 +45,16 @@ async function parseResponse<T>(res: Response): Promise<T> {
     }
 }
 
-export interface ApiHandlerOptions extends RequestInit {
-    auth?: boolean; // default true
-}
-
 export async function apiHandler<TResponse>(
     endpoint: string,
-    options: ApiHandlerOptions = {},
+    options: RequestInit = {},
     retry = true
 ): Promise<TResponse> {
-    const isAuth = options.auth !== false;
+    const isAuthRequired = options.credentials === 'include';
+    // console.log("PATH: ", endpoint, "isAuthRequired: ", isAuthRequired)
+    let response = await apiFetch(endpoint, options)
 
-    let response = isAuth
-        ? await fetchWithAuth(endpoint, options)
-        : await fetchWithoutAuth(endpoint, options);
-
-    if (isAuth && response.status === 401 && retry) {
+    if (isAuthRequired && response.status === 401 && retry) {
         const refreshed = await refreshAuthToken();
 
         if (refreshed) {
