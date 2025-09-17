@@ -12,7 +12,7 @@ export const createBlogAndPublish = async (title: string, content: string, topic
 
     const response = await apiHandler<Blog>(`${BLOG_API_URL}`, {
         method: "POST",
-        auth: true, // default is true
+        credentials: 'include',
         body: JSON.stringify({
             "title": title,
             "content": content,
@@ -27,6 +27,7 @@ export const createBlogAsDraft = async (title: string, content: string, topics: 
     const topic_ids: string[] = topics.map(topic => topic.id);
 
     const response = await apiHandler<Blog>(`${BLOG_API_URL}`, {
+        credentials: 'include',
         method: "POST",
         body: JSON.stringify({
             "title": title,
@@ -40,6 +41,7 @@ export const createBlogAsDraft = async (title: string, content: string, topics: 
 
 export const updateBlog = (id: string, data: Partial<Blog>) => apiHandler<Blog>(
     `${BLOG_API_URL}/${id}`, {
+        credentials: 'include',
         method: 'PATCH',
         body: JSON.stringify(data)
     })
@@ -48,6 +50,7 @@ export const updateBlogAndSaveDraft = async (id: string, title: string, content:
     const topic_ids: string[] = topics.map(topic => topic.id);
     
     const response = await apiHandler<Blog>(`${BLOG_API_URL}/${id}`, {
+        credentials: 'include',
         method: 'PATCH',
         body: JSON.stringify({
             "title": title,
@@ -63,6 +66,7 @@ export const updateBlogAndPublish = async (id: string, title: string, content: s
     const topic_ids: string[] = topics.map(topic => topic.id);
 
     const response = await apiHandler<Blog>(`${BLOG_API_URL}/${id}`, {
+        credentials: 'include',
         method: 'PATCH',
         body: JSON.stringify({
             "title": title,
@@ -74,18 +78,24 @@ export const updateBlogAndPublish = async (id: string, title: string, content: s
     return response;
 }
 
-export const deleteBlog = (id: string) => apiHandler<{ success: boolean }>(`${BLOG_API_URL}/${id}`, {method: 'DELETE'})
+export const deleteBlog = (id: string) => apiHandler<{ success: boolean }>(
+    `${BLOG_API_URL}/${id}`, {
+        credentials: 'include',
+        method: 'DELETE',
+    })
 
 export const getAllDraftBlogs = () => apiHandler<Blog[]>(`${BLOG_API_URL}/draft`)
 
 export const publishDraftedBlog = (id: string) => apiHandler<Blog>(
     `${BLOG_API_URL}/${id}`, {
+        credentials: 'include',
         method: 'PATCH',
         body: JSON.stringify({"is_draft": "false"})
     })
 
 export const savePublishedBlogAsDraft = (id: string) => apiHandler<Blog>(
     `${BLOG_API_URL}/${id}`, {
+        credentials: 'include',
         method: 'PATCH',
         body: JSON.stringify({"is_draft": "true"})
     })

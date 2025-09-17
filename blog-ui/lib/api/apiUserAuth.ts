@@ -1,11 +1,15 @@
 import User from "../types/user";
 import { apiHandler } from "./apiFetchHandler";
-import { AUTH_LOGIN_API_URL, AUTH_SIGNUP_API_URL, AUTH_LOGOUT_API_URL, USER_API_URL } from "../constants/constants";
+import {
+    AUTH_LOGIN_API_URL,
+    AUTH_SIGNUP_API_URL,
+    AUTH_LOGOUT_API_URL,
+    USER_API_URL
+} from "../constants/constants";
 
 export const signUpNewUser = (email: string, password: string) => apiHandler(
     // Where to check password matching?
     `${AUTH_SIGNUP_API_URL}`, {
-        auth: false,
         method: 'POST',
         body: JSON.stringify({
             "email": email,
@@ -15,19 +19,31 @@ export const signUpNewUser = (email: string, password: string) => apiHandler(
 
 export const loginUser = (email: string, password: string) => apiHandler(
     `${AUTH_LOGIN_API_URL}`, {
-        auth: false,
         method: 'POST',
+        credentials: 'include',  // login API route need this for cookies to be set in a response
         body: JSON.stringify({
             "email": email,
             "password": password,
         })
     })
 
-export const getCurrentUser = () => apiHandler<User>(`${USER_API_URL}`)
+export const getCurrentUser = () => apiHandler<User>(
+    `${USER_API_URL}`, {
+        method: 'GET',
+        credentials: 'include'
+})
 
-export const logoutUser = () => apiHandler(`${AUTH_LOGOUT_API_URL}`, {method: 'POST'})
+export const logoutUser = () => apiHandler(`
+    ${AUTH_LOGOUT_API_URL}`, {
+        method: 'POST',
+        credentials: 'include'
+    })
 
-export const deleteUser = () => apiHandler(`${USER_API_URL}`, {method: 'DELETE'})  // user id is obtained in backend from get_current_user
+export const deleteUser = () => apiHandler(
+    `${USER_API_URL}`, {
+        method: 'DELETE',
+        credentials: 'include'
+    })
 
 interface UpdateUserData {
     email?: string;
@@ -53,7 +69,7 @@ export const updateUserData = async (data: UpdateUserData) => {
     }
 
     const response = await apiHandler(`${USER_API_URL}`, {
-        auth: true,
+        credentials: 'include',
         method: 'PATCH',
         body: JSON.stringify(body)
     })
