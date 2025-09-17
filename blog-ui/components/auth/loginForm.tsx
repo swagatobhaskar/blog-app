@@ -46,6 +46,7 @@ export default function LoginForm() {
             router.push('/')
         }
         if (!success || error) {
+            setLoading(false)
             console.error("Log in Error", error)
             // setLoginError(error.message)
         }

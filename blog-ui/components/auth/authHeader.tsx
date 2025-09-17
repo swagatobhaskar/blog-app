@@ -29,11 +29,23 @@ export default function AuthHeader() {
                 setUser(null)
                 console.error("Error fetching currentuser data")
             }
+            setLoading(false)
         }
         fetchUser()
     }, [])
 
-    const handleLogout = () => {}
+    const handleLogout = () => {
+        setUser(null)
+    }
+
+    if (loading) {
+        return (
+            <div className="flex items-center gap-4">
+                <span>Loading...</span>
+                {/* You can replace this with a spinner or other loading indicators */}
+            </div>
+        )
+    }
     
     if (user) {
         console.log("User ", user)
@@ -43,7 +55,7 @@ export default function AuthHeader() {
                 <Link href="/">
                     <Button variant="secondary">Home</Button>
                 </Link>
-                <Button onClick={handleLogout} variant="ghost">
+                <Button onClick={() => handleLogout} variant="ghost">
                     Logout
                 </Button>
             </div>
