@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const jwt = request.cookies.get('access_token')?.value
+  const jwt_access_token = request.cookies.get('access_token')?.value
+  // console.log("MIddleWare:: ", jwt_access_token)
 
   const protectedPaths = [
     '/blog/new',
@@ -11,7 +12,7 @@ export function middleware(request: NextRequest) {
   ]
 
   // If the cookie is missing, the user is redirected to your login page.
-  if (protectedPaths.includes(request.nextUrl.pathname) && !jwt) {
+  if (protectedPaths.includes(request.nextUrl.pathname) && !jwt_access_token) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
