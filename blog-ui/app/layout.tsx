@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { cookies } from 'next/headers'
 
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
+import { GetLoggedInUser } from "@/lib/server-auth/getLoggedInUser";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,11 +26,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('access_token')?.value;
-  console.log("accessToken:: ", accessToken)
-  
+
+  const user = await GetLoggedInUser();
+
   return (
     <html lang="en">
       <body
@@ -39,7 +37,7 @@ export default async function RootLayout({
           flex flex-col min-h-screen` //items-center justify-between
         }
       >
-        <Header token={accessToken} />
+        <Header user={user} />
         <main className="flex-grow w-full"> {/* max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-12 py-6"> */}
           {/* {children} */}
           <div className="w-full">{children}</div>
