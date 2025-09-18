@@ -1,26 +1,25 @@
 import sys
 # import argparse
 import asyncio
-from random import randint
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from app.database.session import engine, AsyncSessionLocal, Base
 from app.database.models import User, Blog, Topic
+from app.utils.security import hash_password
 
 # If tables are not created yet, run this once to create the tables:
 # DON'T RUN THESE IF USING ALEMBIC
-async def init_models():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)  # Optional: drop tables first
-        await conn.run_sync(Base.metadata.create_all)
+# async def init_models():
+#     async with engine.begin() as conn:
+#         await conn.run_sync(Base.metadata.drop_all)  # Optional: drop tables first
+#         await conn.run_sync(Base.metadata.create_all)
 
 # ---------------------------------------------------
 # Users
-async def create_user(email):
+async def create_user(email, password):
     async with AsyncSessionLocal() as session:
-        rand_digits = randint(100, 1000)
-        hash_p = f"134732reehr4h7ry4hued{rand_digits}"
+        hash_p = hash_password(password)
         new_user = User(email=email, hashed_password=hash_p)
         session.add(new_user)
         await session.commit()
@@ -76,29 +75,30 @@ async def blog_list():
 async def main():
     if len(sys.argv) < 2:   # if required arguments aren't provided
         print("Usage:")
-        print("  python cmd_sql.py init")
-        print("  python cmd_sql.py user_create <email>")
-        print("  python cmd_sql.py user_list")
+        # print("  python cli_seed.py init")
+        print("  python cli_seed.py user_create <email> <password>")
+        print("  python cli_seed.py user_list")
         print("---" * 20)
-        print("  python cmd_sql.py topic_create")
-        print("  python cmd_sql.py topic_list")
+        print("  python cli_seed.py topic_create")
+        print("  python cli_seed.py topic_list")
         print("---" * 20)
-        print("  python cmd_sql.py blog_create")
-        print("  python cmd_sql.py blog_list")
+        print("  python cli_seed.py blog_create")
+        print("  python cli_seed.py blog_list")
         return
     
     command = sys.argv[1]   # the command is after the script name
     
-    if command == "init":
-        await init_models()
-        print("Tables created")
+    # if command == "init":
+    #     await init_models()
+    #     print("Tables created")
     
-    elif command == "user_create":
+    if command == "user_create":
         if len(sys.argv) < 3:
-            print("Please provide an email.")
+            print("Please provide an email & password: ")
             return
-        email = sys.argv[2]
-        user = await create_user(email=email)
+        email_from_args = sys.argv[2]
+        password_from_args = sys.argv[3]
+        user = await create_user(email=email_from_args, password=password_from_args)
         print(f"User created: ID={user.id}, Email={user.email}")
     
     elif command == "user_list":

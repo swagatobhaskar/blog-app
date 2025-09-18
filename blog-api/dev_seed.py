@@ -8,6 +8,7 @@ from sqlalchemy.exc import OperationalError
 
 from app.database.session import AsyncSessionLocal
 from app.database.models import User, Blog, Topic
+from app.utils.security import hash_password
 
 ENV = os.getenv("ENV", "development")
 
@@ -21,10 +22,11 @@ async def seed_users(session):
     if await is_table_empty(session, User):
         print("Seeding Users 👤")
 
-        user1 = User(email="john@example.com", hashed_password="hdfhSFD^&f2834sad39")
-        user2 = User(email="bob@example.com", hashed_password="hdfhSFD^&f28346")
-
-        session.add_all([user1, user2])
+        user1 = User(email="john@example.com", hashed_password=hash_password("hdfhSFD^&f2834sad39"))
+        user2 = User(email="bob@example.com", hashed_password=hash_password("hdfhSFD^&f28346"))
+        user3 = User(email="alice@example.com", hashed_password=hash_password("123BCAsagcAv46q#%4GHhs$As3"))
+        
+        session.add_all([user1, user2, user3])
         await session.commit()
         print("Users seeded successfully ✅")
     else:
