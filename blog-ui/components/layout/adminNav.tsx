@@ -15,6 +15,12 @@ export default function AdminNav() {
             >
                 Drafts
             </Link>
+            <Link
+                className="mb-4 px-5 hover:text-blue-700"
+                href={"/blog/new"}
+            >
+                New
+            </Link>
             <hr className="border-1 border-gray-300" />
         </div>
     )

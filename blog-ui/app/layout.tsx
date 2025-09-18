@@ -5,6 +5,7 @@ import "./globals.css";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import { GetLoggedInUser } from "@/lib/server-auth/getLoggedInUser";
+import AdminNav from "@/components/layout/adminNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +28,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const user = await GetLoggedInUser();
+  const { user } = await GetLoggedInUser();
 
   return (
     <html lang="en">
@@ -39,6 +40,11 @@ export default async function RootLayout({
       >
         <Header user={user} />
         <main className="flex-grow w-full"> {/* max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-12 py-6"> */}
+          { user && (
+            <div className="w-fit float-right text-right m-10">
+              <AdminNav />
+            </div>
+          )}
           {/* {children} */}
           <div className="w-full">{children}</div>
         </main>
