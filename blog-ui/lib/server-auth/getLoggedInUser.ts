@@ -4,13 +4,13 @@ import { cookies } from "next/headers";
 import User from "../types/user";
 import { AUTH_REFRESH_TOKEN_API_URL, USER_API_URL } from "../constants/constants";
 
-export async function GetLoggedInUser(): Promise< User | null > {
+export async function GetLoggedInUser(): Promise<{ user: User | null; accessToken?: string }> {
     const cookieStore = await cookies();
 
     let accessToken = cookieStore.get('access_token')?.value;
     const refreshToken = cookieStore.get('refresh_token')?.value;
 
-    if (!accessToken && !refreshToken) return null;
+    if (!accessToken && !refreshToken) return { user: null };
 
     async function fetchCurrentUser(accessToken: string) {
         console.log("Running in utils/server-auth/GetLoggedInUser.ts")
@@ -25,6 +25,7 @@ export async function GetLoggedInUser(): Promise< User | null > {
     let resp = accessToken ? await fetchCurrentUser(accessToken) : null;
 
     if (resp?.status === 401 && refreshToken) {
+        console.log("Fetching for access by refresh @ getLoggedInUser().")
         const refreshResp = await fetch(`${AUTH_REFRESH_TOKEN_API_URL}`, {
             method: 'POST',
             headers: {
@@ -44,10 +45,11 @@ export async function GetLoggedInUser(): Promise< User | null > {
         }
     }
 
-    if (resp && resp.ok) {
-        return await resp.json();
+    if (resp?.ok) {
+        const user: User = await resp.json()
+        console.log("RETURN ACCess-token: ", accessToken)
+        return { user, accessToken };
     }
 
-    return null;
-
+    return { user: null };
 }
