@@ -8,42 +8,16 @@ import Link from "next/link"
 import { Button } from "../ui/button"
 import { useRouter } from "next/navigation"
 
-type HeaderProps = {
-  token?: string;
-};
-
-export default function AuthHeader({token}: HeaderProps) {
+export default function AuthButtonsInHeader({user}: {user: User | null | undefined}) {
     const router = useRouter()
     const [ loading, setLoading ] = useState<boolean>(false)
-    const [ user, setUser ] = useState< User | null >(null)
+    // const [ user, setUser ] = useState< User | null >(null)
     // console.log("AuthHeader: ", token)
-    if (token) {
-        console.log("AuthHeader: ", token)
+    if (user) {
+        console.log("User in AuthHeader: ", user)
     } else {
-        console.log("NO TOKEN")
+        console.log("NO USER!")
     }
-    // useEffect(() => {
-    //     const fetchUser = async () => {
-    //         console.log("USE EFFECT....")
-    //         const { data, success, error } = await HandleAction(
-    //             () => getCurrentUser(),
-    //             {
-    //                 setLoading: setLoading,
-    //                 successMessage: 'user found',
-    //                 errorMessage: 'Failed to load User'
-    //             }
-    //         )
-    //         if ( success && data ) {
-    //             setUser(data)
-    //         }
-    //         if (error) {
-    //             setUser(null)
-    //             console.error("Error fetching currentuser data")
-    //         }
-    //         setLoading(false)
-    //     }
-    //     fetchUser()
-    // }, [])
 
     const handleLogout = async () => {
         const { success, error } = await HandleAction(
@@ -55,7 +29,7 @@ export default function AuthHeader({token}: HeaderProps) {
             }
         )
         if ( success ) {
-            setUser(null)
+            // setUser(null)
             router.refresh()
         }
         if (error) {
@@ -73,8 +47,8 @@ export default function AuthHeader({token}: HeaderProps) {
         )
     }
     
-    if (token) {
-        console.log("User ", user)
+    if (user) {
+        console.log("User in <AuthButtonsInHeader />", user)
         return (
             <div className="flex items-center gap-4">
                 <span>Hello</span>
