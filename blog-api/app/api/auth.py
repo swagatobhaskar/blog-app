@@ -97,14 +97,14 @@ async def register(
     # Frontend must send this in a custom header on requests:
     # e.g., X-CSRF-Token: <csrf_token>
 
-    return {
-        'message': "New user created successfully!",
-        'user': new_user,
-        'token_type': 'bearer',
-        'access_token': access_token,
-        'refresh_token': refresh_token,
-        'csrf_token': csrf_token
-    }
+    # return {
+    #     'message': "New user created successfully!",
+    #     'user': new_user,
+    #     'token_type': 'bearer',
+    #     'access_token': access_token,
+    #     'refresh_token': refresh_token,
+    #     'csrf_token': csrf_token
+    # }
 
 
 @router.post("/login", response_model=auth_schema.UserLogin, status_code=status.HTTP_200_OK)
@@ -169,13 +169,13 @@ async def login(
     # Frontend must send this in a custom header on requests:
     # e.g., X-CSRF-Token: <csrf_token>
 
-    return {
-        'message': 'login successful!',
-        'access_token': access_token,
-        'refresh_token': refresh_token,
-        'token_type': 'bearer',
-        'csrf_token': csrf_token,
-    }
+    # return {
+    #     'message': 'login successful!',
+    #     'access_token': access_token,
+    #     'refresh_token': refresh_token,
+    #     'token_type': 'bearer',
+    #     'csrf_token': csrf_token,
+    # }
 
 
 @router.post("/refresh-token", response_model=auth_schema.TokenSchema, status_code=status.HTTP_200_OK)
@@ -210,7 +210,7 @@ async def refresh_token(response: Response, request: Request, session: AsyncSess
             samesite="none",
             path="/"     # Limit access to only the refresh-token route
         )
-        return {"access_token": access_token, "token_type": "bearer"}
+        # return {"access_token": access_token, "token_type": "bearer"}
     
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token expired or invalid!")
@@ -218,6 +218,7 @@ async def refresh_token(response: Response, request: Request, session: AsyncSess
 
 @router.post('/logout', status_code=status.HTTP_200_OK)
 def logout(response: Response):
-    response.delete_cookie(key='access_token', httponly=True, secure=True, samesite='strict')
-    response.delete_cookie(key='refresh_token', httponly=True, secure=True, samesite='strict') #, path='/refresh_token')
+    response.delete_cookie(key='access_token', httponly=True, secure=True, samesite='none')
+    response.delete_cookie(key='refresh_token', httponly=True, secure=True, samesite='none') #, path='/refresh_token')
+    response.delete_cookie(key='csrf_token', httponly=False, secure=True, samesite='none')
     return {"message": "Logout successful! Cookies cleared."}
