@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from "react"
-import { getCurrentUser, logoutUser } from '@/lib/api/apiUserAuth'
-import HandleAction from "@/lib/handleAction"
+import { useState } from "react"
+import { logoutUser } from '@/lib/api/apiUserAuth'
 import User from "@/lib/types/user"
 import Link from "next/link"
 import { Button } from "../ui/button"
@@ -14,34 +13,29 @@ export default function AuthButtonsInHeader({user}: {user: User | null | undefin
     // const [ user, setUser ] = useState< User | null >(null)
     // console.log("AuthHeader: ", token)
     if (user) {
-        console.log("User in AuthHeader: ", user)
+        console.log("User in AuthButonsHeader: ", user)
     } else {
         console.log("NO USER!")
     }
 
     const handleLogout = async () => {
-        const { success, error } = await HandleAction(
-            () => logoutUser(),
-            {
-                setLoading: setLoading,
-                successMessage: 'Logout Successful',
-                errorMessage: 'Logout Failed!'
-            }
-        )
-        if ( success ) {
-            // setUser(null)
-            router.refresh()
+        setLoading(true);
+        try{
+            await logoutUser();  // nothing to return
+            console.log("LOGOUT Successful!");
+            // router.push('/');
+            router.refresh(); // Force layout re-evaluation
+        } catch (err) {
+            console.error("Something went wrong: ", err)
+        } finally {
+            setLoading(false)
         }
-        if (error) {
-            console.error("Error logging out!")
-        }
-        setLoading(false)
     }
 
     if (loading) {
         return (
             <div className="flex items-center gap-4">
-                <span>Loading...</span>
+                <span>Logging Out...</span>
                 {/* You can replace this with a spinner or other loading indicators */}
             </div>
         )
@@ -51,10 +45,6 @@ export default function AuthButtonsInHeader({user}: {user: User | null | undefin
         console.log("User in <AuthButtonsInHeader />", user)
         return (
             <div className="flex items-center gap-4">
-                <span>Hello</span>
-                <Link href="/">
-                    <Button variant="secondary">Home</Button>
-                </Link>
                 <Button onClick={handleLogout} variant="ghost">
                     { loading ? '...' : 'Logout'} 
                 </Button>
