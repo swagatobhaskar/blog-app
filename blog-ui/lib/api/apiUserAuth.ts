@@ -33,11 +33,11 @@ export const getCurrentUser = () => apiHandler<User>(
         credentials: 'include'
 })
 
-export const logoutUser = () => apiHandler(`
-    ${AUTH_LOGOUT_API_URL}`, {
+export const logoutUser = async (): Promise<void> => apiHandler(
+    `${AUTH_LOGOUT_API_URL}`, {
         method: 'POST',
         credentials: 'include'
-    })
+    })  // No Content to return
 
 export const deleteUser = () => apiHandler(
     `${USER_API_URL}`, {
