@@ -38,12 +38,21 @@ async function parseResponse<T>(res: Response): Promise<T> {
         throw new Error(errorMessage);
     }
 
+    // If some of the endpoints return no body (204_NO_CONTENT):
+    const contentLength = res.headers.get('Content-Length');
+    if (res.status === 204 || contentLength === '0') {
+        return null as unknown as T;
+    }
+
     try {
         return await res.json();
     } catch {
         throw new Error('Failed to parse JSON response');
     }
 }
+
+// apiHandler<T>() does NOT return Response
+// It returns the parsed JSON data of type T.
 
 export async function apiHandler<TResponse>(
     endpoint: string,
