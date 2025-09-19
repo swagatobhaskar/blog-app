@@ -107,7 +107,7 @@ async def register(
     # }
 
 
-@router.post("/login", status_code=status.HTTP_200_OK)  # , response_model=auth_schema.UserLogin
+@router.post("/login", status_code=status.HTTP_204_NO_CONTENT)  # , response_model=auth_schema.UserLogin
 async def login(
     response: Response,
     # form_data: OAuth2PasswordRequestForm = Depends(), # not using form data
@@ -178,7 +178,7 @@ async def login(
     # }
 
 
-@router.post("/refresh-token", status_code=status.HTTP_200_OK) # response_model=auth_schema.TokenSchema, 
+@router.post("/refresh-token", status_code=status.HTTP_204_NO_CONTENT) # response_model=auth_schema.TokenSchema, 
 async def refresh_token(response: Response, request: Request, session: AsyncSession = Depends(get_db)):
     # print("COOKIE: ", request.cookies)
     refresh_token_from_cookie = request.cookies.get("refresh_token")
@@ -216,9 +216,9 @@ async def refresh_token(response: Response, request: Request, session: AsyncSess
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token expired or invalid!")
     
 
-@router.post('/logout', status_code=status.HTTP_200_OK)
+@router.post('/logout', status_code=status.HTTP_204_NO_CONTENT)
 def logout(response: Response):
     response.delete_cookie(key='access_token', httponly=True, secure=True, samesite='none')
     response.delete_cookie(key='refresh_token', httponly=True, secure=True, samesite='none') #, path='/refresh_token')
     response.delete_cookie(key='csrf_token', httponly=False, secure=True, samesite='none')
-    return {"message": "Logout successful! Cookies cleared."}
+    # return {"message": "Logout successful! Cookies cleared."}
