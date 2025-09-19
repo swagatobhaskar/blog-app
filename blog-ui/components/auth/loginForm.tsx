@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {useForm} from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { email, z } from 'zod'
+import { z } from 'zod'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { loginUser } from '@/lib/api/apiUserAuth'
@@ -20,7 +20,6 @@ type LoginFormData = z.infer<typeof loginSchema>
 export default function LoginForm() {
     const router = useRouter()
     const [ loading, setLoading ] = useState<boolean>(false)
-    // const [ loginError, setLoginError ] = useState<Error | unknown>()
 
     const {
         register,
@@ -40,10 +39,13 @@ export default function LoginForm() {
                 errorMessage: 'Error loging in!'
             }
         )
-        if (success && data) {
+
+        // console.log('Login attempt result:', { success, data, error });
+        if (success) {  // no data in this request
             setLoading(false)
-            console.log("DATA:",data)
-            router.push('/')
+            // router.push('/')
+            router.replace('/');   // Redirect away from login page
+            router.refresh();      // Force layout to re-run and fetch new user
         }
         if (!success || error) {
             setLoading(false)
