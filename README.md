@@ -32,5 +32,13 @@ On FastAPI, for sanitization- `pip install nh3`
 
 install react-hook-form, zodresolver, zod: `npm install react-hook-form`, `npm install @hookform/resolvers`, `npm install zod`.
 
-To Do Next: Rating/Reactions, RTE pic upload, pagination, contact form, beautify blog display, place blog control buttons on the top right beside title. Add password hasing function in backend cli_seed and dev_seed, add CSRF dependency in fastapi.
-
+### To Implement Next:
+- Rating/Reactions,
+- RTE pic upload,
+- pagination,
+- contact form,
+- beautify blog display,
+- place blog control buttons on the top right beside title,
+- Add CSRF dependency in fastapi,
+- Return 204_NO_CONTENT from /api/auth/logout, may be also in /api/auth/login,
+- Remove or shorten HandleAction().
