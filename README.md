@@ -40,5 +40,4 @@ install react-hook-form, zodresolver, zod: `npm install react-hook-form`, `npm i
 - beautify blog display,
 - place blog control buttons on the top right beside title,
 - Add CSRF dependency in fastapi,
-- Return 204_NO_CONTENT from /api/auth/logout, may be also in /api/auth/login,
 - Remove or shorten HandleAction().
