@@ -41,3 +41,12 @@ install react-hook-form, zodresolver, zod: `npm install react-hook-form`, `npm i
 - place blog control buttons on the top right beside title,
 - Add CSRF dependency in fastapi,
 - Remove or shorten HandleAction().
+- Document design principles in design-guide.md,
+- Refreshing page after a long time is rendering logging out matters, but cookies are present!
+  (REFRESH-TOKEN URL ISN'T FIRING AT ALL, MAY BE, DURING HARD REFRESH!!)
+  After some time, logged-in matters are rendering again, I think I saw correct! Yes, that's correct. Could be hydration issue.
+  But, hard refreshing again causes the same issue! And NO call to API refresh-token too!
+- make app/blog/draft/page.tsx a client component? May be, because it requires authenticated requests.
+  But, protected pages can be server components, as I saw!
+  Is the same required for `app/blog/draft/[id]/page.tsx`?
+- 
