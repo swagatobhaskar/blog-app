@@ -13,11 +13,12 @@ export async function GetLoggedInUser(): Promise<{ user: User | null; accessToke
     if (!accessToken && !refreshToken) return { user: null };
 
     async function fetchCurrentUser(accessToken: string) {
-        console.log("Running in utils/server-auth/GetLoggedInUser.ts")
+        // console.log("Running in utils/server-auth/GetLoggedInUser.ts")
         return await fetch(`${USER_API_URL}`, {
             method: 'GET',
             headers: {
                 Cookie: `access_token=${accessToken}`,
+                'Content-Type': 'application/json',
             }
         });
     }
@@ -25,7 +26,7 @@ export async function GetLoggedInUser(): Promise<{ user: User | null; accessToke
     let resp = accessToken ? await fetchCurrentUser(accessToken) : null;
 
     if (resp?.status === 401 && refreshToken) {
-        console.log("Fetching for access by refresh @ getLoggedInUser().")
+        // console.log("Fetching for access by refresh @ getLoggedInUser().")
         const refreshResp = await fetch(`${AUTH_REFRESH_TOKEN_API_URL}`, {
             method: 'POST',
             headers: {
@@ -45,9 +46,9 @@ export async function GetLoggedInUser(): Promise<{ user: User | null; accessToke
         }
     }
 
-    if (resp?.ok) {
+    if (resp?.ok) {         // DO NOT EXPORT accessToken
         const user: User = await resp.json()
-        console.log("RETURN ACCess-token: ", accessToken)
+        // console.log("RETURN ACCess-token: ", accessToken)
         return { user, accessToken };
     }
 
