@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import Blog from "@/lib/types/blog"
 import {BLOG_API_URL} from "@/lib/constants/constants"
 import RenderBlogAndOptionButtons from "@/components/blog/renderBlog";
+import { GetLoggedInUser } from "@/lib/server-auth/getLoggedInUser";
 
 export async function generateStaticParams() {
     try {
@@ -29,7 +30,11 @@ export async function generateStaticParams() {
 }
 
 export default async function BlogPage({params}: {params: {id: string}}) {
-    const { id } = params;
+
+    const { user } = await GetLoggedInUser()
+    // console.log("USER in blog/[id]/page.tsx: ", user);
+    
+    const {id} = params   // const { id } = params
     const res = await fetch(`${BLOG_API_URL}/${id}`, {
         method: 'GET',
         headers: {'Content-Type': 'application/json',},
@@ -41,7 +46,7 @@ export default async function BlogPage({params}: {params: {id: string}}) {
 
     return (
         <div className="w-4/5 mx-auto text-center flex flex-col gap-y-2.5">
-            <RenderBlogAndOptionButtons blog={blog} />
+            <RenderBlogAndOptionButtons blog={blog} user={user} />
         </div>
     );
 }
