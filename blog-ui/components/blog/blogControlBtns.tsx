@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { usePathname } from 'next/navigation'
 import Blog from "@/lib/types/blog";
 import ButtonCancel from "@/components/ui/buttons/buttonCancel";
 import ButtonSecondary from "@/components/ui/buttons/buttonSecondary";
@@ -11,6 +12,7 @@ import { publishDraftedBlog, savePublishedBlogAsDraft, deleteBlog } from "@/lib/
 
 export default function BlogControlButtons({blog}: {blog: Blog}) {
     const router = useRouter()
+    const pathName = usePathname()
     const [ loading, setLoading ] = useState<boolean>(false)
 
     const handlePublishBlog = async () => {
@@ -64,10 +66,14 @@ export default function BlogControlButtons({blog}: {blog: Blog}) {
         if (data) {router.refresh()}
     }
 
+    // Define the pattern for matching `/blog/<id>` (UUID-like format)
+    const pattern = /^\/blog\/[a-f0-9\-]{36}$/;
+    const isBlogPostPath = pattern.test(pathName)
+    
     return (
-        <>
+        <div className={`w-[90%] flex justify-evenly ${isBlogPostPath ? 'flex-col' : 'flex-row'}`}>
             { blog.is_draft ? (
-                <div className="w-[50%] flex flex-row justify-evenly">
+                <>
                     <ButtonCancel
                         text="Delete"
                         onClick={handleDeleteBlog}
@@ -84,9 +90,9 @@ export default function BlogControlButtons({blog}: {blog: Blog}) {
                         onClick={handlePublishBlog}
                         disabled={loading}
                     />
-                </div>
+                </>
             ) : (
-                <div className="w-[50%] flex flex-row justify-evenly">
+                <>
                     <ButtonCancel
                         text="Delete"
                         onClick={handleDeleteBlog}
@@ -105,8 +111,8 @@ export default function BlogControlButtons({blog}: {blog: Blog}) {
                         onClick={handleSaveBlogAsDraft}
                         disabled={loading}
                     />
-                </div>
+                </>
             )}
-        </>
+        </div>
     )
 }
