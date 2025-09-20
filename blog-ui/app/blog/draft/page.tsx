@@ -1,18 +1,18 @@
-// Server component
+// Server Component
+
 import Blog from "@/lib/types/blog"
 
 import { BLOG_API_URL } from "@/lib/constants/constants"
 import BlogListItem from "@/components/blog/blogListItem"
 import { GetLoggedInUser } from "@/lib/server-auth/getLoggedInUser"
-import { cookies } from "next/headers";
 
 export default async function DraftsList() {
 
     const { user, accessToken } = await GetLoggedInUser();
-    console.log("(in draft) RETURNED FROM GetLoggedInUser:-- ", user, accessToken)
+    // console.log("(in draft) RETURNED FROM GetLoggedInUser:-- ", user, accessToken)
 
     const fetchDraftForAuthenticatedUser = async (accessToken: string | undefined) => {
-        console.log("TOKEN in draft server request: ", accessToken)
+        // console.log("TOKEN in draft server request: ", accessToken)
         const res = await fetch(`${BLOG_API_URL}/draft`, {
             method: 'GET',
             headers: {
