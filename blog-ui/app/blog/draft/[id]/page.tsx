@@ -3,9 +3,15 @@ import { notFound } from "next/navigation";
 import { BLOG_API_URL } from "@/lib/constants/constants";
 import Blog from "@/lib/types/blog";
 import RenderBlogAndOptionButtons from "@/components/blog/renderBlog";
+import User from "@/lib/types/user";
 
-export default async function DraftBlogItem({params}: {params: {id: string}}) {
-    const { id } = params;
+interface DraftBlogPostProps {
+    id: string;
+    user: User | null;
+}
+
+export default async function DraftBlogItem({id, user}: DraftBlogPostProps) {
+    // const { id } = params;
     const res = await fetch(`${BLOG_API_URL}/draft/${id}`, {
             method: 'GET',
             headers: {'Content-Type': 'application/json',},
@@ -17,7 +23,7 @@ export default async function DraftBlogItem({params}: {params: {id: string}}) {
     
     return (
         <div className="">
-            <RenderBlogAndOptionButtons blog={draftBlog} />
+            <RenderBlogAndOptionButtons blog={draftBlog} user={user} />
         </div>
     )
 }
