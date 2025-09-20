@@ -43,9 +43,14 @@ export default function LoginForm() {
         // console.log('Login attempt result:', { success, data, error });
         if (success) {  // no data in this request
             setLoading(false)
-            // router.push('/')
+            // router.push('/')   // Doesn't re-render server components after navigation
             router.replace('/');   // Redirect away from login page
             router.refresh();      // Force layout to re-run and fetch new user
+            
+            // The below combo is not working!
+            // It's going back to the previous page but no change is rendering!
+            // router.back()
+            // router.refresh()
         }
         if (!success || error) {
             setLoading(false)
