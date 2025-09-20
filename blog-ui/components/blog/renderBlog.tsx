@@ -4,8 +4,14 @@ import DOMPurify from "isomorphic-dompurify"
 import Blog from "@/lib/types/blog"
 import TopicList from "../topic/topicList"
 import BlogControlButtons from "./blogControlBtns"
+import User from "@/lib/types/user"
 
-export default function RenderBlogAndOptionButtons({blog}: {blog: Blog}) {
+interface BlogAndUserprops {
+    blog: Blog;
+    user: User | null;
+}
+
+export default function RenderBlogAndOptionButtons({blog, user}: BlogAndUserprops) {
     const safeHTMLContent = DOMPurify.sanitize(blog.content);
 
     return (
@@ -21,7 +27,11 @@ export default function RenderBlogAndOptionButtons({blog}: {blog: Blog}) {
                 </div>
                 <TopicList topics={blog.topics} />
             </div>
-            <BlogControlButtons blog={blog} /> 
+            { user && (
+                <div className="float-right">
+                    <BlogControlButtons blog={blog} />
+                </div>    
+            )}
         </div>
     )
 }
