@@ -31,7 +31,7 @@ export default function LoginForm() {
 
     const onSubmit = async (formData: LoginFormData) => {
         setLoading(true)
-        const { data, success, error } = await HandleAction(
+        const { success, error } = await HandleAction(
             () => loginUser(formData.email, formData.password),
             {
                 setLoading: setLoading,
@@ -40,7 +40,7 @@ export default function LoginForm() {
             }
         )
 
-        // console.log('Login attempt result:', { success, data, error });
+        // console.log('Login attempt result:', { success, error });
         if (success) {  // no data in this request
             setLoading(false)
             // router.push('/')   // Doesn't re-render server components after navigation
