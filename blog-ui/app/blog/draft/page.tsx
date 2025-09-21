@@ -6,7 +6,7 @@ import { BLOG_API_URL } from "@/lib/constants/constants"
 import BlogListItem from "@/components/blog/blogListItem"
 import { GetLoggedInUser } from "@/lib/server-auth/getLoggedInUser"
 
-export default async function DraftsList() {
+export default async function DraftsListPage() {
 
     const { user, accessToken } = await GetLoggedInUser();
     // console.log("(in draft) RETURNED FROM GetLoggedInUser:-- ", user, accessToken)
@@ -26,7 +26,7 @@ export default async function DraftsList() {
     }
 
     const draftBlogs: Blog[] = await fetchDraftForAuthenticatedUser(accessToken);
-    console.log("DRAFTBLOGS: ", draftBlogs)
+    // console.log("DRAFTBLOGS: ", draftBlogs)
 
     if (!Array.isArray(draftBlogs)) {
         return <p className="text-red-500">Failed to load drafts</p>;
