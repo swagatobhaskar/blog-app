@@ -5,7 +5,7 @@ import {BLOG_API_URL} from "@/lib/constants/constants"
 import RenderBlogAndOptionButtons from "@/components/blog/renderBlog";
 import { GetLoggedInUser } from "@/lib/server-auth/getLoggedInUser";
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<{ id: string }[]> {
     try {
         const res = await fetch(`${BLOG_API_URL}`, {
             method: 'GET',
@@ -29,12 +29,12 @@ export async function generateStaticParams() {
     }
 }
 
-export default async function BlogPage({params}: {params: {id: string}}) {
+export default async function BlogPage({params}: {params: Promise<{ id: string }>}) {
 
     const { user } = await GetLoggedInUser()
     // console.log("USER in blog/[id]/page.tsx: ", user);
     
-    const {id} = params   // const { id } = params
+    const { id } = await params;
     const res = await fetch(`${BLOG_API_URL}/${id}`, {
         method: 'GET',
         headers: {'Content-Type': 'application/json',},
