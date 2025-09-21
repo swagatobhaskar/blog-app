@@ -49,4 +49,5 @@ install react-hook-form, zodresolver, zod: `npm install react-hook-form`, `npm i
 - make app/blog/draft/page.tsx a client component? May be, because it requires authenticated requests.
   But, protected pages can be server components, as I saw!
   Is the same required for `app/blog/draft/[id]/page.tsx`?
+- actions vs client side fetch when httponly cookies are involved!
 - 
