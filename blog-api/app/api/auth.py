@@ -79,7 +79,7 @@ async def register(
         secure=True,              # Set to True in production with HTTPS
         # samesite="strict",        # or 'lax', depending on your frontend/backend separation
         samesite="none",
-        path="/api/auth/refresh-token"     # Limit access to only the refresh-token route
+        path="/"    # Limit access to only the refresh-token route
     )
 
     # CSRF cookie for added CSRF protection
@@ -151,7 +151,8 @@ async def login(
         secure=True,              # Set to True in production with HTTPS
         # samesite="strict",        # or 'lax', depending on your frontend/backend separation
         samesite="none",
-        path="/api/auth/refresh-token"     # Limit access to only the refresh-token route
+        path="/" # Limit access to only the refresh-token route. 
+                # Though, "api/auth/refresh-token" was making refresh_token undefined in next.js
     )
 
     # CSRF cookie for added CSRF protection
