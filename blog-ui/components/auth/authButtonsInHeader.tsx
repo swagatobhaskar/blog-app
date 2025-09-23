@@ -10,13 +10,12 @@ import { useRouter } from "next/navigation"
 export default function AuthButtonsInHeader({user}: {user: User | null | undefined}) {
     const router = useRouter()
     const [ loading, setLoading ] = useState<boolean>(false)
-    // const [ user, setUser ] = useState< User | null >(null)
-    // console.log("AuthHeader: ", token)
-    if (user) {
-        console.log("User in AuthButonsHeader: ", user)
-    } else {
-        console.log("NO USER!")
-    }
+    
+    // if (user) {
+    //     console.log("User in AuthButonsHeader: ", user)
+    // } else {
+    //     console.log("NO USER!")
+    // }
 
     const handleLogout = async () => {
         setLoading(true);
@@ -42,10 +41,10 @@ export default function AuthButtonsInHeader({user}: {user: User | null | undefin
     }
     
     if (user) {
-        console.log("User in <AuthButtonsInHeader />", user)
+        // console.log("User in <AuthButtonsInHeader />", user)
         return (
             <div className="flex items-center gap-4">
-                <Button onClick={handleLogout} variant="ghost">
+                <Button onClick={handleLogout} variant="secondary">
                     { loading ? '...' : 'Logout'} 
                 </Button>
             </div>

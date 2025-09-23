@@ -2,7 +2,7 @@ import Blog from "@/lib/types/blog"
 import { BLOG_API_URL } from "@/lib/constants/constants"
 import BlogListItem from "@/components/blog/blogListItem"
 import AdminNav from "@/components/layout/adminNav";
-import { GetLoggedInUser } from "@/lib/server-auth/getLoggedInUser";
+import { GetLoggedInUser } from "@/lib/server-utils/getLoggedInUser";
 import SearchBlogByTitleOrTopic from "@/components/blog/searchBlogByTitleOrTopic";
 
 export default async function Home() {

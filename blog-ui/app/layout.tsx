@@ -4,7 +4,7 @@ import "./globals.css";
 
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
-import { GetLoggedInUser } from "@/lib/server-auth/getLoggedInUser";
+import { GetLoggedInUser } from "@/lib/server-utils/getLoggedInUser";
 import AdminNav from "@/components/layout/adminNav";
 
 const geistSans = Geist({
@@ -45,7 +45,6 @@ export default async function RootLayout({
               <AdminNav />
             </div>
           )}
-          {/* {children} */}
           <div className="w-full">{children}</div>
         </main>
         <Footer />

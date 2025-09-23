@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import Blog from "@/lib/types/blog"
 import {BLOG_API_URL} from "@/lib/constants/constants"
 import RenderBlogAndOptionButtons from "@/components/blog/renderBlog";
-import { GetLoggedInUser } from "@/lib/server-auth/getLoggedInUser";
+import { GetLoggedInUser } from "@/lib/server-utils/getLoggedInUser";
 
 export async function generateStaticParams(): Promise<{ id: string }[]> {
     try {
@@ -34,12 +34,14 @@ export default async function BlogPage({params}: {params: Promise<{ id: string }
     const { user } = await GetLoggedInUser()
     // console.log("USER in blog/[id]/page.tsx: ", user);
     
+    // ServerFetchHandler() isn't required here
     const { id } = await params;
     const res = await fetch(`${BLOG_API_URL}/${id}`, {
         method: 'GET',
         headers: {'Content-Type': 'application/json',},
         cache: "default", // better performance if data updates infrequently
     });
+    
     // Show 404 page if blog is not found
     if (!res.ok) return notFound();
     const blog: Blog = await res.json()

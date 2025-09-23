@@ -2,30 +2,34 @@
 
 import Blog from "@/lib/types/blog"
 
-import { BLOG_API_URL } from "@/lib/constants/constants"
+import { DRAFT_BLOG_API_URL } from "@/lib/constants/constants"
 import BlogListItem from "@/components/blog/blogListItem"
-import { GetLoggedInUser } from "@/lib/server-auth/getLoggedInUser"
+import { GetLoggedInUser } from "@/lib/server-utils/getLoggedInUser"
+import ServerFetchHandler from "@/lib/server-utils/serverFetchHandler";
 
 export default async function DraftsListPage() {
 
-    const { user, accessToken } = await GetLoggedInUser();
+    const { user } = await GetLoggedInUser();
     // console.log("(in draft) RETURNED FROM GetLoggedInUser:-- ", user, accessToken)
 
-    const fetchDraftForAuthenticatedUser = async (accessToken: string | undefined) => {
-        // console.log("TOKEN in draft server request: ", accessToken)
-        const res = await fetch(`${BLOG_API_URL}/draft`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Cookie: `access_token=${accessToken}`,
-            },
-            cache: 'no-store' //'default', // what will it be for blogs?
-            }
-        )
-        return res.json()
-    }
+    // const fetchDraftForAuthenticatedUser = async (accessToken: string | undefined) => {
+    //     // console.log("TOKEN in draft server request: ", accessToken)
+    //     const res = await fetch(`${BLOG_API_URL}/draft`, {
+    //         method: 'GET',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             Cookie: `access_token=${accessToken}`,
+    //         },
+    //         cache: 'no-store' //'default', // what will it be for blogs?
+    //         }
+    //     )
+    //     return res.json()
+    // }
 
-    const draftBlogs: Blog[] = await fetchDraftForAuthenticatedUser(accessToken);
+    // const draftBlogs: Blog[] = await fetchDraftForAuthenticatedUser(accessToken);
+    const draftBlogsResp: Response = await ServerFetchHandler({ url: `${DRAFT_BLOG_API_URL}` })
+    const draftBlogs: Blog[] = await draftBlogsResp.json()
+
     // console.log("DRAFTBLOGS: ", draftBlogs)
 
     if (!Array.isArray(draftBlogs)) {
