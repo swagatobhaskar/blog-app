@@ -4,20 +4,28 @@ import BlogListItem from "@/components/blog/blogListItem"
 import AdminNav from "@/components/layout/adminNav";
 import { GetLoggedInUser } from "@/lib/server-utils/getLoggedInUser";
 import SearchBlogByTitleOrTopic from "@/components/blog/searchBlogByTitleOrTopic";
+import { ProxyFetchHandler } from "@/lib/server-utils/proxyFetchHandler";
+
 
 export default async function Home() {
     const { user } = await GetLoggedInUser();
     
-    const res = await fetch(
-        `${BLOG_API_URL}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            cache: 'default', // what will it be for blogs?
+    // const resp = await proxyFetchHandler<Blog>(`${BLOG_API_URL}`)
+
+    const resp = await fetch(`/api/proxy/${BLOG_API_URL}`, {
+        method: 'GET'
     })
 
-    const blogs: Blog[] = await res.json()
+    // const res = await fetch(
+    //     `${BLOG_API_URL}`, {
+    //         method: 'GET',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         cache: 'default', // what will it be for blogs?
+    // })
+
+    const blogs: Blog[] = await resp.json() // already coming as JSON
 
     return (
         <div className="w-full lg:w-3/6 mx-auto px-10 mt-5 lg:mt-10">

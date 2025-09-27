@@ -5,7 +5,7 @@ import Blog from "@/lib/types/blog"
 import { DRAFT_BLOG_API_URL } from "@/lib/constants/constants"
 import BlogListItem from "@/components/blog/blogListItem"
 import { GetLoggedInUser } from "@/lib/server-utils/getLoggedInUser"
-import ServerFetchHandler from "@/lib/server-utils/serverFetchHandler";
+import ServerFetchHandler from "@/lib/server-utils/_serverFetchHandler";
 
 export default async function DraftsListPage() {
 
