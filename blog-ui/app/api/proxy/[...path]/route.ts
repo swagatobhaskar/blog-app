@@ -20,6 +20,7 @@ async function refreshAccessToken(refreshToken: string): Promise<string> {
 }
 
 export async function GET(req: NextRequest, {params}: {params: {path: string[]}}) {
+    console.log("Path in proxy API GET: ", params.path[0])
     const encodedUrl = params.path[0];
     const targetUrl = decodeURIComponent(encodedUrl);
     return handleProxy(req, targetUrl);

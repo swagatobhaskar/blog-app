@@ -36,6 +36,8 @@ export default async function BlogPage({params}: {params: Promise<{ id: string }
     
     // ServerFetchHandler() isn't required here
     const { id } = await params;
+    
+    // This route isn't protected, should I use ProxyFetchHandler() here?
     const res = await fetch(`${BLOG_API_URL}/${id}`, {
         method: 'GET',
         headers: {'Content-Type': 'application/json',},

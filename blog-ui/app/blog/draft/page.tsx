@@ -6,6 +6,7 @@ import { DRAFT_BLOG_API_URL } from "@/lib/constants/constants"
 import BlogListItem from "@/components/blog/blogListItem"
 import { GetLoggedInUser } from "@/lib/server-utils/getLoggedInUser"
 import ServerFetchHandler from "@/lib/server-utils/_serverFetchHandler";
+import { ProxyFetchHandler } from "@/lib/server-utils/proxyFetchHandler";
 
 export default async function DraftsListPage() {
 
@@ -27,8 +28,10 @@ export default async function DraftsListPage() {
     // }
 
     // const draftBlogs: Blog[] = await fetchDraftForAuthenticatedUser(accessToken);
-    const draftBlogsResp: Response = await ServerFetchHandler({ url: `${DRAFT_BLOG_API_URL}` })
-    const draftBlogs: Blog[] = await draftBlogsResp.json()
+    // const draftBlogsResp: Response = await ServerFetchHandler({ url: `${DRAFT_BLOG_API_URL}` })
+    // const draftBlogs: Blog[] = await draftBlogsResp.json()
+
+    const draftBlogs: Blog[] = await ProxyFetchHandler<Blog[]>(DRAFT_BLOG_API_URL)
 
     // console.log("DRAFTBLOGS: ", draftBlogs)
 

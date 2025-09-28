@@ -5,6 +5,7 @@ import Blog from "@/lib/types/blog";
 import RenderBlogAndOptionButtons from "@/components/blog/renderBlog";
 import { GetLoggedInUser } from "@/lib/server-utils/getLoggedInUser";
 import ServerFetchHandler from "@/lib/server-utils/_serverFetchHandler";
+import { ProxyFetchHandler } from "@/lib/server-utils/proxyFetchHandler";
 
 export default async function DraftBlogItem({params}: {params: Promise<{ id: string }>}) {
     const { id } = await params;
@@ -18,8 +19,10 @@ export default async function DraftBlogItem({params}: {params: Promise<{ id: str
     //         // cache: "default", // better performance if data updates infrequently
     //     });
 
-    const draftBlogResp: Response = await ServerFetchHandler({ url: `${DRAFT_BLOG_API_URL}/${id}` })
-    const draftBlog: Blog = await draftBlogResp.json()
+    // const draftBlogResp: Response = await ServerFetchHandler({ url: `${DRAFT_BLOG_API_URL}/${id}` })
+    // const draftBlog: Blog = await draftBlogResp.json()
+
+    const draftBlog: Blog = await ProxyFetchHandler<Blog>(`${DRAFT_BLOG_API_URL}/${id}`)
 
     // Show 404 page if blog is not found
     if (!draftBlog) return notFound();
