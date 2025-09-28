@@ -8,7 +8,8 @@ export async function ProxyFetchHandler<T = any>(
 ): Promise<T> {
     const cookieHeader = (await cookies()).toString();
 
-    const res = await fetch(`/api/proxy/${path}`, {
+    const encodedPath = encodeURIComponent(path)
+    const res = await fetch(`/api/proxy/${encodedPath}`, {
         ...init,
         headers: {
             ...(init?.headers || {}),

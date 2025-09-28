@@ -20,7 +20,9 @@ async function refreshAccessToken(refreshToken: string): Promise<string> {
 }
 
 export async function GET(req: NextRequest, {params}: {params: {path: string[]}}) {
-    return handleProxy(req, params);
+    const encodedUrl = params.path[0];
+    const targetUrl = decodeURIComponent(encodedUrl);
+    return handleProxy(req, targetUrl);
 }
 
 // export async function POST(req: NextRequest, {params}: {params: {path: string[]}}) {
@@ -35,7 +37,7 @@ export async function GET(req: NextRequest, {params}: {params: {path: string[]}}
 //     return handleProxy(req, params);
 // }
 
-async function handleProxy(req: NextRequest, params: {path: string[]}) {
+async function handleProxy(req: NextRequest, targetUrl: string) {
     const cookieStore = await cookies()
     console.log("cookieStore: ", cookieStore);
     const accessToken = cookieStore.get('access_token')?.value;
@@ -45,17 +47,17 @@ async function handleProxy(req: NextRequest, params: {path: string[]}) {
         return NextResponse.json({error: "Not Authorized!"}, {status: 401});
     }
 
-    // const path = params.path.join('/') // e.g., ["auth", "login"] → "auth/login"
-    const targetPath = params.path.join("/");
-    // const backendUrl = `http://localhost:5000/${targetPath}`;
+    // const targetPath = params.path.join("/");
     const method = req.method
     const body = method === 'GET' || method === 'HEAD' ? undefined : await req.text();
+    // const contentType = req.headers.get('Content-Type');
 
     const makeBackendRequest = async (cookieHeader: string) => {
-        return await fetch(targetPath, {
+        return await fetch(targetUrl, {
             method,
             headers: {
-                ...Object.fromEntries(req.headers.entries()),
+                // ...Object.fromEntries(req.headers.entries()),
+                'Content-Type': req.headers.get('Content-Type') || 'application/json',
                 'Cookie': cookieHeader,
             },
             body,
@@ -63,7 +65,6 @@ async function handleProxy(req: NextRequest, params: {path: string[]}) {
     };
     // Make initial request with existing cookie
     let response = await makeBackendRequest(`access_token=${accessToken}; refresh_token=${refreshToken}`);
-
 
     // Handle 401 -> try refresh
     if ( response.status === 401 && refreshToken ) {
@@ -73,12 +74,12 @@ async function handleProxy(req: NextRequest, params: {path: string[]}) {
 
             // clone and return response with new Set-Cookie header
             const respBody = await response.text();
-            const respHeaders = new Headers(response.headers);
-            respHeaders.set('set-cookie', setCookie);
-          
+            const headers = new Headers(response.headers);
+            headers.set('set-cookie', setCookie);
+
             return new NextResponse(respBody, {
                 status: response.status,
-                headers: response.headers
+                headers,
             });
         }
         catch (err) {

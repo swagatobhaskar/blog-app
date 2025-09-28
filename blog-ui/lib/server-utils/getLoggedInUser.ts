@@ -7,11 +7,13 @@ import { USER_API_URL } from "../constants/constants";
 export async function GetLoggedInUser(): Promise<{ user: User | null }> {
     console.log("Inside GetLoggedInUser()..")
 
-    const resp = await ProxyFetchHandler(`${USER_API_URL}`)
-    console.log("GetLoggedInUser Result: ", resp)
+    try {
+        const user: User = await ProxyFetchHandler<User>(`${USER_API_URL}`);
+        console.log("GetLoggedInUser Result: ", user);
 
-    if (!resp.ok) return { user: null }
-
-    const user: User = await resp.json()
-    return { user }
+        return { user };
+    } catch (error) {
+        console.error("Error fetching user: ", error);
+        return { user: null };
+    }
 }
