@@ -10,11 +10,7 @@ import { ProxyFetchHandler } from "@/lib/server-utils/proxyFetchHandler";
 export default async function Home() {
     const { user } = await GetLoggedInUser();
     
-    // const resp = await proxyFetchHandler<Blog>(`${BLOG_API_URL}`)
-
-    const resp = await fetch(`/api/proxy/${BLOG_API_URL}`, {
-        method: 'GET'
-    })
+    const blogs: Blog[] = await ProxyFetchHandler<Blog[]>(`${BLOG_API_URL}`)
 
     // const res = await fetch(
     //     `${BLOG_API_URL}`, {
@@ -24,8 +20,6 @@ export default async function Home() {
     //         },
     //         cache: 'default', // what will it be for blogs?
     // })
-
-    const blogs: Blog[] = await resp.json() // already coming as JSON
 
     return (
         <div className="w-full lg:w-3/6 mx-auto px-10 mt-5 lg:mt-10">
