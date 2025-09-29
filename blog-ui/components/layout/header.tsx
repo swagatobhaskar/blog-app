@@ -3,7 +3,7 @@ import Nav from "./nav"
 import AuthButtonsInHeader from "../auth/authButtonsInHeader"
 import User from "@/lib/types/user"
 
-export default function Header({user}: {user: User | null | undefined}) {
+export default function Header({user}: {user: User | null }) {
     return (
         <header className="w-full h-12 sm:h-16 md:h-20 lg:h-24 border-b-1 border-gray-600
             bg-slate-300 flex flex-row items-center justify-between px-2 sm:px-4 gap-x-3"

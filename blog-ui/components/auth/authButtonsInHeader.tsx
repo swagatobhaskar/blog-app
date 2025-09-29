@@ -7,7 +7,7 @@ import Link from "next/link"
 import { Button } from "../ui/button"
 import { useRouter } from "next/navigation"
 
-export default function AuthButtonsInHeader({user}: {user: User | null | undefined}) {
+export default function AuthButtonsInHeader({user}: {user: User | null }) {
     const router = useRouter()
     const [ loading, setLoading ] = useState<boolean>(false)
     
