@@ -8,28 +8,27 @@ export async function ProxyFetchHandler<T = any>(
 ): Promise<T> {
     const cookieHeader = (await cookies()).toString();
     
-    console.log("PATH in ProxyFetchHandler(): ", path);
-
     const encodedPath = encodeURIComponent(path)
-    console.log("Encoded PATH in ProxyFetchHandler(): ", encodedPath);
-    
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'; // or VERCEL_URL logic if deployed
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const proxyUrl = `${baseUrl}/api/proxy/${encodedPath}`;
 
     const res = await fetch(proxyUrl, {
         ...init,
         headers: {
-            ...(init?.headers || {}),
-            Cookie: cookieHeader
+            ...(init?.headers || {
+                'Content-Type': 'application/json',
+            }),
+            Cookie: cookieHeader || '',  // Empty cookie header if no cookies are found
         },
         cache: "no-store",
     });
+    // console.log("ProxyFetchHandler fetch res-- ", res);
 
     if (!res.ok) {
         throw new Error("Proxy fetch failed: "); 
     }
 
-    return res.json();
+    const jsonResponse = await res.json();
+    console.log("Proxy Response: ", jsonResponse);
+    return jsonResponse;
 }
-
-// (${res.status}: ${await res.text()})`);
