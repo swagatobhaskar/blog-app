@@ -6,9 +6,6 @@ import { GetLoggedInUser } from "@/lib/server-utils/getLoggedInUser";
 import SearchBlogByTitleOrTopic from "@/components/blog/searchBlogByTitleOrTopic";
 
 export default async function Home() {
-    const { user } = await GetLoggedInUser();
-    console.log("User in app/page.tsx: ", user)
-
     // Not using ProxyFetchHandler because auth isn't necessary here
     const res = await fetch(
         `${BLOG_API_URL}`, {
@@ -20,6 +17,9 @@ export default async function Home() {
     });
 
     const blogs: Blog[] = await res.json();
+
+    const { user } = await GetLoggedInUser();
+    // console.log("User in app/page.tsx: ", user)
 
     return (
         <div className="w-full lg:w-3/6 mx-auto px-10 mt-5 lg:mt-10">

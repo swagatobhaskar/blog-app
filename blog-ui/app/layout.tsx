@@ -29,7 +29,8 @@ export default async function RootLayout({
 }>) {
 
   const { user } = await GetLoggedInUser();
-
+  // console.log("User in Layout.tsx: ", user);
+  
   return (
     <html lang="en">
       <body

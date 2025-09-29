@@ -1,10 +1,12 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-import { AUTH_REFRESH_TOKEN_API_URL } from "@/lib/constants/constants";
+import { AUTH_REFRESH_TOKEN_API_URL, USER_API_URL } from "@/lib/constants/constants";
 
 async function refreshAccessToken(refreshToken: string): Promise<string> {
-    const resp = await fetch(`${AUTH_REFRESH_TOKEN_API_URL}`, {     // or just AUTH_REFRESH_TOKEN_API_URL ?
+    console.log("Inside proxy API refresh handler.")
+
+    const resp = await fetch(AUTH_REFRESH_TOKEN_API_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -20,7 +22,7 @@ async function refreshAccessToken(refreshToken: string): Promise<string> {
 }
 
 export async function GET(req: NextRequest, {params}: {params: {path: string[]}}) {
-    console.log("Path in proxy API GET: ", params.path[0])
+    // console.log("Path in proxy API GET: ", params.path[0])
     const encodedUrl = params.path[0];
     const targetUrl = decodeURIComponent(encodedUrl);
     return handleProxy(req, targetUrl);
@@ -40,34 +42,37 @@ export async function GET(req: NextRequest, {params}: {params: {path: string[]}}
 
 async function handleProxy(req: NextRequest, targetUrl: string) {
     const cookieStore = await cookies()
-    console.log("cookieStore: ", cookieStore);
+    // console.log("cookieStore: ", cookieStore);
     const accessToken = cookieStore.get('access_token')?.value;
     const refreshToken = cookieStore.get('refresh_token')?.value;
+ 
+    // If no cookies, handle it gracefully, especially for /api/me requests
+    if (!accessToken && targetUrl.includes(USER_API_URL)) {
+        // No cookies, return a null user response
+        return NextResponse.json({ user: null });
+    }
 
     if (!accessToken || !refreshToken) {
         return NextResponse.json({error: "Not Authorized!"}, {status: 401});
     }
 
-    // const targetPath = params.path.join("/");
     const method = req.method
-    const body = method === 'GET' || method === 'HEAD' ? undefined : await req.text();
-    // const contentType = req.headers.get('Content-Type');
+    // const body = method === 'GET' || method === 'HEAD' ? undefined : await req.text();
 
     const makeBackendRequest = async (cookieHeader: string) => {
+        console.log("Making backend request from proxy to-- ", targetUrl);
         return await fetch(targetUrl, {
             method,
             headers: {
-                // ...Object.fromEntries(req.headers.entries()),
                 'Content-Type': req.headers.get('Content-Type') || 'application/json',
                 'Cookie': cookieHeader,
             },
-            body,
+            // body,
         });
     };
     // Make initial request with existing cookie
     let response = await makeBackendRequest(`access_token=${accessToken}; refresh_token=${refreshToken}`);
 
-    // Handle 401 -> try refresh
     if ( response.status === 401 && refreshToken ) {
         try {
             const setCookie = await refreshAccessToken(refreshToken);
@@ -90,6 +95,7 @@ async function handleProxy(req: NextRequest, targetUrl: string) {
 
     // Normal return, no refresh needed
     const resBody = await response.text();
+    console.log("resBody: ", resBody);
     return new NextResponse(resBody, {
         status: response.status,
         headers: response.headers
