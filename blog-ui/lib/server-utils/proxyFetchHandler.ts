@@ -29,6 +29,6 @@ export async function ProxyFetchHandler<T = any>(
     }
 
     const jsonResponse = await res.json();
-    console.log("Proxy Response: ", jsonResponse);
+    // console.log("Proxy Response: ", jsonResponse);   
     return jsonResponse;
 }

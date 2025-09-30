@@ -13,7 +13,7 @@ export async function GetLoggedInUser(): Promise<{ user: User | null }> {   //, 
         // const proxyUrl = `${baseUrl}/api/proxy/${encodeURIComponent(targetUrl)}`;
         
         const user = await ProxyFetchHandler<User>(USER_API_URL, {method: 'GET'});
-        console.log("GetLoggedInUser Result: ", user);
+        // console.log("GetLoggedInUser Result: ", user);
         return { user };
 
     } catch (error) {
