@@ -49,7 +49,7 @@ async function handleProxy(req: NextRequest, targetUrl: string) {
     // If no cookies, handle it gracefully, especially for /api/me requests
     if (!accessToken && targetUrl.includes(USER_API_URL)) {
         // No cookies, return a null user response
-        return NextResponse.json({ user: null });
+        return NextResponse.json(null); //({ user: null });
     }
 
     if (!accessToken || !refreshToken) {
@@ -60,7 +60,7 @@ async function handleProxy(req: NextRequest, targetUrl: string) {
     // const body = method === 'GET' || method === 'HEAD' ? undefined : await req.text();
 
     const makeBackendRequest = async (cookieHeader: string) => {
-        console.log("Making backend request from proxy to-- ", targetUrl);
+        // console.log("Making backend request from proxy to-- ", targetUrl);
         return await fetch(targetUrl, {
             method,
             headers: {
@@ -95,7 +95,7 @@ async function handleProxy(req: NextRequest, targetUrl: string) {
 
     // Normal return, no refresh needed
     const resBody = await response.text();
-    console.log("resBody: ", resBody);
+    // console.log("resBody: ", resBody);
     return new NextResponse(resBody, {
         status: response.status,
         headers: response.headers
