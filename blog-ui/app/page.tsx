@@ -8,7 +8,7 @@ import SearchBlogByTitleOrTopic from "@/components/blog/searchBlogByTitleOrTopic
 export default async function Home() {
     // Not using ProxyFetchHandler because auth isn't necessary here
     const res = await fetch(
-        `${BLOG_API_URL}`, {
+        BLOG_API_URL, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
